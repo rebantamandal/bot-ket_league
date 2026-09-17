@@ -1,0 +1,73 @@
+{
+  "date": "2026-09-17T11:48:15Z",
+  "htmlSha256": "7e075814a84c016feb9f90a09cc14ef1dcd7e6a52e3ce82ae82efe6f8d36d11c",
+  "viewport": [
+    1440,
+    900
+  ],
+  "deviceScaleFactor": 1,
+  "secondsPerSample": 7,
+  "mode": "doubles",
+  "samples": [
+    {
+      "scenario": "daylight_overview",
+      "wallSeconds": 7.0286999999999535,
+      "fps": 59.043635380653996,
+      "simulationPace": 1.00065920203437,
+      "learningUpdates": [
+        23,
+        26,
+        22,
+        22
+      ],
+      "renderer": "Canvas / Atelier",
+      "drawMs": 8.05594115073782,
+      "tickMs": 0.20181526501504624,
+      "canvas": [
+        1720,
+        830
+      ]
+    },
+    {
+      "scenario": "rainy_night_overview",
+      "wallSeconds": 7.013200000000186,
+      "fps": 59.31671704785105,
+      "simulationPace": 0.9969295994211091,
+      "learningUpdates": [
+        20,
+        19,
+        19,
+        20
+      ],
+      "renderer": "Canvas / Atelier",
+      "drawMs": 7.976511233214394,
+      "tickMs": 0.17950023196633147,
+      "canvas": [
+        1720,
+        830
+      ]
+    },
+    {
+      "scenario": "rainy_night_follow_Slate",
+      "wallSeconds": 7.037199999999953,
+      "fps": 34.1044733700906,
+      "simulationPace": 0.9982663559361191,
+      "learningUpdates": [
+        18,
+        20,
+        24,
+        18
+      ],
+      "renderer": "Canvas / Atelier",
+      "drawMs": 17.737227242039467,
+      "tickMs": 0.12789358082894792,
+      "canvas": [
+        1548,
+        747
+      ]
+    }
+  ],
+  "errors": [],
+  "method": "Headless Chromium, actual Canvas renderer and independent 120 Hz worker. Two seconds settle, seven seconds ordinary live playback per sample. No simultaneous benchmark or comparison job.",
+  "limitation": "These samples are not benchmarks of the user device or a native gaming GPU."
+}

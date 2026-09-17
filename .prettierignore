@@ -1,0 +1,6 @@
+index.html
+reports/
+tests/fixtures/
+previews/
+*.md
+MANIFEST.json

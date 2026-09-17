@@ -1,0 +1,5 @@
+{
+  "bytes": 8786927,
+  "sha256": "85f62817386e3d4c63a78ffbc5e3fdfc6735292273f5423744387b806dda22f0",
+  "note": "Actual portable file download used in browser roundtrip checks; payload omitted from source distribution because the test regenerates it."
+}

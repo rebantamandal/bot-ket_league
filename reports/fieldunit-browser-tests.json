@@ -1,0 +1,218 @@
+{
+  "date": "2026-09-17T16:08:16Z",
+  "htmlSha256": "ce1a3f16c39a49b3cc28fa51c719b9534395e1ed37a7af824cfa3365ccb56b39",
+  "passed": 49,
+  "failed": 0,
+  "results": [
+    {
+      "name": "11 identity is built into the actual cartridge",
+      "pass": true
+    },
+    {
+      "name": "All assets are bundled with no font or external requests",
+      "pass": true
+    },
+    {
+      "name": "Default stage does not expose settings or technical cards",
+      "pass": true
+    },
+    {
+      "name": "Overview score uses flat typography without a hardware backing",
+      "pass": true
+    },
+    {
+      "name": "Camera keys expose their real pressed state",
+      "pass": true
+    },
+    {
+      "name": "Pressing a camera key updates the camera and key state",
+      "pass": true
+    },
+    {
+      "name": "Play button mirrors paused simulation state",
+      "pass": true
+    },
+    {
+      "name": "Paused display does not secretly keep training",
+      "pass": true
+    },
+    {
+      "name": "Adaptive Canvas scaling reduces pixels without moving the chosen camera",
+      "pass": true,
+      "detail": {
+        "before": 1720,
+        "after": 1548,
+        "orbit": true,
+        "cam": true
+      }
+    },
+    {
+      "name": "Adaptive rendering never changes a paused physical world or learned policy",
+      "pass": true
+    },
+    {
+      "name": "Explicit high-detail mode is not silently downscaled",
+      "pass": true
+    },
+    {
+      "name": "Opening Fieldnotes focuses its close button",
+      "pass": true
+    },
+    {
+      "name": "Wide-screen Fieldnotes does not disable the live controls",
+      "pass": true
+    },
+    {
+      "name": "Tactical display comes from real candidate measurements",
+      "pass": true
+    },
+    {
+      "name": "Arrival indicator is numeric or explicitly unavailable",
+      "pass": true
+    },
+    {
+      "name": "Compared plans show finite authored and bounded learned scores",
+      "pass": true
+    },
+    {
+      "name": "Closing the inspector restores the opening button focus",
+      "pass": true
+    },
+    {
+      "name": "Fieldnotes keyboard shortcut opens the inspector",
+      "pass": true
+    },
+    {
+      "name": "Arrow keys navigate proper inspector tabs",
+      "pass": true
+    },
+    {
+      "name": "End key selects the last inspector tab",
+      "pass": true
+    },
+    {
+      "name": "Escape exits the inspector",
+      "pass": true
+    },
+    {
+      "name": "Tablet inspector is a labelled modal, not a covered interactive page",
+      "pass": true
+    },
+    {
+      "name": "Tablet modal has a real dismissible scrim",
+      "pass": true
+    },
+    {
+      "name": "Reverse Tab wraps within modal controls",
+      "pass": true
+    },
+    {
+      "name": "Forward Tab wraps back to modal start",
+      "pass": true
+    },
+    {
+      "name": "Outside tap closes modal and restores page interaction",
+      "pass": true
+    },
+    {
+      "name": "320 x 700: no page overflow, score and play available",
+      "pass": true
+    },
+    {
+      "name": "390 x 844: no page overflow, score and play available",
+      "pass": true
+    },
+    {
+      "name": "768 x 1024: no page overflow, score and play available",
+      "pass": true
+    },
+    {
+      "name": "844 x 390: no page overflow, score and play available",
+      "pass": true
+    },
+    {
+      "name": "1024 x 768: no page overflow, score and play available",
+      "pass": true
+    },
+    {
+      "name": "1440 x 900: no page overflow, score and play available",
+      "pass": true
+    },
+    {
+      "name": "Reduced-motion preference removes decorative animation",
+      "pass": true
+    },
+    {
+      "name": "Focus mode hides interface, score and weather together",
+      "pass": true
+    },
+    {
+      "name": "Night palette switch does not change the physical world",
+      "pass": true
+    },
+    {
+      "name": "Night overview retains the flat scoreboard treatment",
+      "pass": true
+    },
+    {
+      "name": "Observer titles describe recorded motion sequences",
+      "pass": true
+    },
+    {
+      "name": "Replay inspector explicitly separates recorded motion from live decisions",
+      "pass": true
+    },
+    {
+      "name": "Live tactic meters are hidden while replaying history",
+      "pass": true
+    },
+    {
+      "name": "Returning live restores the true current tactic display",
+      "pass": true
+    },
+    {
+      "name": "Actual 08 world import is supported in the worker",
+      "pass": true
+    },
+    {
+      "name": "Older-planner migration warning is visible to the user",
+      "pass": true
+    },
+    {
+      "name": "Bad save fails with an actionable error",
+      "pass": true,
+      "detail": "Unsupported weather state."
+    },
+    {
+      "name": "Rejected save leaves both policies and world untouched",
+      "pass": true
+    },
+    {
+      "name": "Portable file download contains a complete 11 world",
+      "pass": true
+    },
+    {
+      "name": "Injected worker failure stops simulation and shows recovery controls",
+      "pass": true
+    },
+    {
+      "name": "Failure message does not claim unsaved progress was recovered",
+      "pass": true
+    },
+    {
+      "name": "Recovery exports the actual last available backup unchanged",
+      "pass": true
+    },
+    {
+      "name": "No unhandled JavaScript exception during UI, import, replay or fault recovery",
+      "pass": true,
+      "detail": []
+    }
+  ],
+  "errors": [],
+  "seconds": 12.710543155670166,
+  "limitations": [
+    "Chromium document injection; real-origin IndexedDB reload unverified.",
+    "Worker fault is deliberately injected to exercise recovery."
+  ]
+}

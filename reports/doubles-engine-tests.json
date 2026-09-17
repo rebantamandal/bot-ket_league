@@ -1,0 +1,406 @@
+{
+  "passed": 52,
+  "failed": 0,
+  "results": [
+    {
+      "name": "2v2 creates four unique cars, two on each opposing side",
+      "pass": true
+    },
+    {
+      "name": "Duel and legacy co-op retain exactly two cars",
+      "pass": true
+    },
+    {
+      "name": "Kickoffs mirror team positions and keep all cars separated",
+      "pass": true
+    },
+    {
+      "name": "Kickoff alternates the closer player within each team",
+      "pass": true
+    },
+    {
+      "name": "Goals award the team, not the last player ID",
+      "pass": true
+    },
+    {
+      "name": "All four terminal learning transitions are processed at a goal",
+      "pass": true
+    },
+    {
+      "name": "Weather, field, heat and resource charge survive four-player kickoffs",
+      "pass": true
+    },
+    {
+      "name": "Every unordered car pair is processed (all six pairs)",
+      "pass": true
+    },
+    {
+      "name": "Teammates physically collide; they are not ghost cars",
+      "pass": true
+    },
+    {
+      "name": "Orange secondary car contacts the ball with its own ID",
+      "pass": true
+    },
+    {
+      "name": "A received teammate pass requires real separated same-team contacts",
+      "pass": true
+    },
+    {
+      "name": "An intercepted opposition touch never becomes a teammate pass",
+      "pass": true
+    },
+    {
+      "name": "An immediate near-ball tap is not a counted pass",
+      "pass": true
+    },
+    {
+      "name": "A stale same-team touch is not a counted pass",
+      "pass": true
+    },
+    {
+      "name": "Recent same-team reception can produce an observed assist",
+      "pass": true
+    },
+    {
+      "name": "An own goal cannot award the opposing passer an assist",
+      "pass": true
+    },
+    {
+      "name": "Shared touch reward is identical for both teammates",
+      "pass": true
+    },
+    {
+      "name": "Reception itself has no extra reward over the identical physical touch",
+      "pass": true
+    },
+    {
+      "name": "Both agents on a team see the same first-challenger assignment",
+      "pass": true
+    },
+    {
+      "name": "Assignment rotates when the other teammate becomes more reachable",
+      "pass": true
+    },
+    {
+      "name": "Off-ball player has support and cover alternatives",
+      "pass": true
+    },
+    {
+      "name": "Near-ball teammate commitment prevents a second close challenge",
+      "pass": true
+    },
+    {
+      "name": "Pass candidates explicitly target a teammate, not an opponent",
+      "pass": true
+    },
+    {
+      "name": "The second defender participates in shot-lane blocking",
+      "pass": true
+    },
+    {
+      "name": "All four learners change separate weights during live play",
+      "pass": true
+    },
+    {
+      "name": "Human control freezes Mica only; all three other cars still learn",
+      "pass": true
+    },
+    {
+      "name": "Freeze-learning applies to the full four-car roster",
+      "pass": true
+    },
+    {
+      "name": "Duel team features are zero, preserving their original feature meanings",
+      "pass": true
+    },
+    {
+      "name": "Older 52-feature policies migrate losslessly with zero team coefficients",
+      "pass": true
+    },
+    {
+      "name": "Full 2v2 state resumes identical physics and learner updates",
+      "pass": true
+    },
+    {
+      "name": "Replays retain four players, team identity and match format",
+      "pass": true
+    },
+    {
+      "name": "Observer records all four identities, not just the original two",
+      "pass": true
+    },
+    {
+      "name": "Four-car observation remains read-only",
+      "pass": true
+    },
+    {
+      "name": "2v2 import rejects missing player",
+      "pass": true
+    },
+    {
+      "name": "2v2 import rejects mismatched policy count",
+      "pass": true
+    },
+    {
+      "name": "2v2 import rejects duplicate player ID",
+      "pass": true
+    },
+    {
+      "name": "2v2 import rejects wrong team assignment",
+      "pass": true
+    },
+    {
+      "name": "2v2 import rejects invalid frozen roster",
+      "pass": true
+    },
+    {
+      "name": "2v2 import rejects invalid coordinator player",
+      "pass": true
+    },
+    {
+      "name": "2v2 import rejects corrupt learned input",
+      "pass": true
+    },
+    {
+      "name": "Runtime format switch creates four brains and four observer slots",
+      "pass": true
+    },
+    {
+      "name": "Mode changes preserve weather, field and elapsed world time",
+      "pass": true
+    },
+    {
+      "name": "1v1 and 2v2 maintain separate learned-policy banks",
+      "pass": true
+    },
+    {
+      "name": "Mode-local observed pass statistics do not leak into a duel",
+      "pass": true
+    },
+    {
+      "name": "Historical sparring freezes both orange players, not their blue rivals",
+      "pass": true
+    },
+    {
+      "name": "Historical team exports and resumes without losing live policies",
+      "pass": true
+    },
+    {
+      "name": "Reset affects all four live learners without resetting weather",
+      "pass": true
+    },
+    {
+      "name": "Malformed four-player import leaves the running world intact",
+      "pass": true
+    },
+    {
+      "name": "A saved 2v2 moment includes all four physical agents and their learners",
+      "pass": true
+    },
+    {
+      "name": "Existing full two-car file can migrate, then switch to 2v2",
+      "pass": true
+    },
+    {
+      "name": "Identical frozen teams tie every paired evaluation from matched seeds",
+      "pass": true
+    },
+    {
+      "name": "Both saved-moment branches simulate four players without altering the anchor",
+      "pass": true
+    }
+  ],
+  "measurements": {
+    "evaluation": {
+      "kind": "paired-evaluation",
+      "mode": "doubles",
+      "date": "2026-09-17T16:01:08.773Z",
+      "archiveId": 1,
+      "secondsPerGame": 3,
+      "gameCount": 16,
+      "frozen": true,
+      "agents": [
+        {
+          "agent": 0,
+          "trials": 4,
+          "goalDifferenceChange": 0,
+          "mean": 0,
+          "interval": [
+            0,
+            0
+          ],
+          "touchDifference": 0,
+          "allTied": true
+        },
+        {
+          "agent": 1,
+          "trials": 4,
+          "goalDifferenceChange": 0,
+          "mean": 0,
+          "interval": [
+            0,
+            0
+          ],
+          "touchDifference": 0,
+          "allTied": true
+        }
+      ],
+      "rows": [
+        {
+          "agent": 0,
+          "condition": "dry",
+          "side": 0,
+          "seed": 1771,
+          "baseline": {
+            "scoreFor": 0,
+            "scoreAgainst": 0,
+            "touches": 1,
+            "forwardImpulse": 1
+          },
+          "current": {
+            "scoreFor": 0,
+            "scoreAgainst": 0,
+            "touches": 1,
+            "forwardImpulse": 1
+          },
+          "delta": 0
+        },
+        {
+          "agent": 0,
+          "condition": "dry",
+          "side": 1,
+          "seed": 1774,
+          "baseline": {
+            "scoreFor": 0,
+            "scoreAgainst": 0,
+            "touches": 1,
+            "forwardImpulse": 1
+          },
+          "current": {
+            "scoreFor": 0,
+            "scoreAgainst": 0,
+            "touches": 1,
+            "forwardImpulse": 1
+          },
+          "delta": 0
+        },
+        {
+          "agent": 0,
+          "condition": "wet",
+          "side": 0,
+          "seed": 1818,
+          "baseline": {
+            "scoreFor": 0,
+            "scoreAgainst": 0,
+            "touches": 1,
+            "forwardImpulse": 0.9769004574570206
+          },
+          "current": {
+            "scoreFor": 0,
+            "scoreAgainst": 0,
+            "touches": 1,
+            "forwardImpulse": 0.9769004574570206
+          },
+          "delta": 0
+        },
+        {
+          "agent": 0,
+          "condition": "wet",
+          "side": 1,
+          "seed": 1821,
+          "baseline": {
+            "scoreFor": 0,
+            "scoreAgainst": 0,
+            "touches": 1,
+            "forwardImpulse": 0.972762978567119
+          },
+          "current": {
+            "scoreFor": 0,
+            "scoreAgainst": 0,
+            "touches": 1,
+            "forwardImpulse": 0.972762978567119
+          },
+          "delta": 0
+        },
+        {
+          "agent": 1,
+          "condition": "dry",
+          "side": 0,
+          "seed": 1784,
+          "baseline": {
+            "scoreFor": 0,
+            "scoreAgainst": 0,
+            "touches": 1,
+            "forwardImpulse": 1
+          },
+          "current": {
+            "scoreFor": 0,
+            "scoreAgainst": 0,
+            "touches": 1,
+            "forwardImpulse": 1
+          },
+          "delta": 0
+        },
+        {
+          "agent": 1,
+          "condition": "dry",
+          "side": 1,
+          "seed": 1787,
+          "baseline": {
+            "scoreFor": 0,
+            "scoreAgainst": 0,
+            "touches": 1,
+            "forwardImpulse": 1
+          },
+          "current": {
+            "scoreFor": 0,
+            "scoreAgainst": 0,
+            "touches": 1,
+            "forwardImpulse": 1
+          },
+          "delta": 0
+        },
+        {
+          "agent": 1,
+          "condition": "wet",
+          "side": 0,
+          "seed": 1831,
+          "baseline": {
+            "scoreFor": 0,
+            "scoreAgainst": 0,
+            "touches": 1,
+            "forwardImpulse": 0.9765004661373787
+          },
+          "current": {
+            "scoreFor": 0,
+            "scoreAgainst": 0,
+            "touches": 1,
+            "forwardImpulse": 0.9765004661373787
+          },
+          "delta": 0
+        },
+        {
+          "agent": 1,
+          "condition": "wet",
+          "side": 1,
+          "seed": 1834,
+          "baseline": {
+            "scoreFor": 0,
+            "scoreAgainst": 0,
+            "touches": 1,
+            "forwardImpulse": 0.9736882568790836
+          },
+          "current": {
+            "scoreFor": 0,
+            "scoreAgainst": 0,
+            "touches": 1,
+            "forwardImpulse": 0.9736882568790836
+          },
+          "delta": 0
+        }
+      ],
+      "limitation": "Four paired starts per team, dry/wet surfaces and swapped sides against one historical team. Descriptive small-sample evidence, not proof of improved teamwork."
+    }
+  }
+}

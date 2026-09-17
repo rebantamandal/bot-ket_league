@@ -1,0 +1,152 @@
+{
+  "date": "2026-09-17T16:01:05.074Z",
+  "passed": 36,
+  "failed": 0,
+  "sourceSha256": "6c019e5ace5916b1a253e5039683c52d64c22ffb3ac876363d9d0df9d6ded134",
+  "results": [
+    {
+      "name": "11 controller extends the existing schema with twelve team features",
+      "pass": true
+    },
+    {
+      "name": "Arrival estimate penalises turning away from the interception",
+      "pass": true
+    },
+    {
+      "name": "Arrival estimate increases for a farther point on the same route",
+      "pass": true
+    },
+    {
+      "name": "Wet grip changes travel and braking estimates",
+      "pass": true
+    },
+    {
+      "name": "A defender in the shot lane is detected geometrically",
+      "pass": true
+    },
+    {
+      "name": "Heavy physical props also obstruct a shot lane",
+      "pass": true
+    },
+    {
+      "name": "Teammates are not treated as enemy defenders in cooperative play",
+      "pass": true
+    },
+    {
+      "name": "Predicted imminent goals raise urgency and suppress resource detours",
+      "pass": true
+    },
+    {
+      "name": "Emergency defence does not add random exploration noise",
+      "pass": true
+    },
+    {
+      "name": "Learned residual stays bounded even at maximal imported weights",
+      "pass": true
+    },
+    {
+      "name": "TD update differentiates through the bounded residual",
+      "pass": true
+    },
+    {
+      "name": "A selected forecast remains the driving target, not raw ball chasing",
+      "pass": true
+    },
+    {
+      "name": "A sudden ball-velocity change causes early replanning",
+      "pass": true
+    },
+    {
+      "name": "Blocked-motion recovery applies controls without teleporting",
+      "pass": true
+    },
+    {
+      "name": "Recovering ahead of a stationary ball does not repeat the old own-goal route",
+      "pass": true
+    },
+    {
+      "name": "Candidate and actual control values stay finite across 192 condition/state cases",
+      "pass": true
+    },
+    {
+      "name": "The two online learners have independent weights and traces",
+      "pass": true
+    },
+    {
+      "name": "Human control excludes that agent from online updates",
+      "pass": true
+    },
+    {
+      "name": "A full 11 snapshot retains planner metadata and resumes exactly",
+      "pass": true
+    },
+    {
+      "name": "Actual 08 full-world fixture preserves physical state and learned weights",
+      "pass": true
+    },
+    {
+      "name": "Import rejects zero sphere mass",
+      "pass": true
+    },
+    {
+      "name": "Import rejects negative sphere radius",
+      "pass": true
+    },
+    {
+      "name": "Import rejects engine heat outside physical range",
+      "pass": true
+    },
+    {
+      "name": "Import rejects unbounded steering",
+      "pass": true
+    },
+    {
+      "name": "Import rejects invalid trace length",
+      "pass": true
+    },
+    {
+      "name": "Import rejects learner method shadowing",
+      "pass": true
+    },
+    {
+      "name": "Import rejects weather method shadowing",
+      "pass": true
+    },
+    {
+      "name": "Import rejects malformed observer samples",
+      "pass": true
+    },
+    {
+      "name": "Import rejects missing frozen flags",
+      "pass": true
+    },
+    {
+      "name": "Import rejects corrupt planned action",
+      "pass": true
+    },
+    {
+      "name": "Import rejects impossible atmospheric fraction",
+      "pass": true
+    },
+    {
+      "name": "Runtime exports the 11 edition with a versioned full-world schema",
+      "pass": true
+    },
+    {
+      "name": "Every malformed import is atomic: the running world is left intact",
+      "pass": true
+    },
+    {
+      "name": "08 migration explicitly warns that future decisions can differ",
+      "pass": true
+    },
+    {
+      "name": "Sequence observer never commands or changes a live physical body",
+      "pass": true
+    },
+    {
+      "name": "Recorded patterns carry ordered actual motion and bounded feature contrasts",
+      "pass": true
+    }
+  ]
+}

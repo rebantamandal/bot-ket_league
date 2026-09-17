@@ -1,0 +1,22 @@
+{
+  "name": "bot-ket_league",
+  "version": "0.11.0",
+  "private": true,
+  "description": "Bot-ket League: offline systemic car-soccer world: weather, living turf and self-playing learners",
+  "scripts": {
+    "build": "python build.py",
+    "dev": "node tools/dev.cjs",
+    "format": "prettier --write \"src/*.{js,css}\" \"tests/*.cjs\" \"tools/*.cjs\"",
+    "format:check": "prettier --check \"src/*.{js,css}\" \"tests/*.cjs\" \"tools/*.cjs\"",
+    "fingerprint": "node tools/fingerprint.cjs",
+    "test": "node tests/engine.test.cjs && node tests/world.test.cjs && node tests/fieldunit.test.cjs && node tests/doubles.test.cjs",
+    "test:build": "python tests/build-audit.py",
+    "test:browser": "python tests/fieldunit-browser.test.py && python tests/doubles-browser.test.py && python tests/world-browser.test.py",
+    "test:stress": "node tests/doubles-stress.cjs",
+    "test:performance": "python tests/doubles-performance.py",
+    "previews": "python tests/capture-previews.py"
+  },
+  "devDependencies": {
+    "prettier": "^3.9.7"
+  }
+}

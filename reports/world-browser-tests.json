@@ -1,0 +1,584 @@
+{
+  "sourceSha256": "1abfd8ec2cf48e44fcbe81b4886201c7bc8df9bf67bb66517acf0a4a8cca47c2",
+  "date": "2026-09-17T16:02:55Z",
+  "passed": 66,
+  "failed": 0,
+  "results": [
+    {
+      "name": "Standalone document starts without external asset requests",
+      "pass": true
+    },
+    {
+      "name": "Live physics and learning run in a dedicated worker",
+      "pass": true
+    },
+    {
+      "name": "Both models update in ordinary real-time play",
+      "pass": true
+    },
+    {
+      "name": "Default view hides all inspector panels",
+      "pass": true
+    },
+    {
+      "name": "Default interface contains a live weather clock",
+      "pass": true
+    },
+    {
+      "name": "Live simulation keeps near real-time pace",
+      "pass": true,
+      "detail": {
+        "fps": 60.00300015000748,
+        "renderMs": 2.199910282390944,
+        "workerTickMs": 0.08934190106648578,
+        "actualPace": 0.9999166736105045,
+        "backing": [
+          1720,
+          830
+        ],
+        "longTasks": [
+          69
+        ]
+      }
+    },
+    {
+      "name": "Presentation exceeds 45 fps in the desktop daylight sample",
+      "pass": true
+    },
+    {
+      "name": "Weather badge opens the World instruments",
+      "pass": true
+    },
+    {
+      "name": "Rain front actually increases atmospheric rain and turf moisture",
+      "pass": true
+    },
+    {
+      "name": "Weather-aware learner exposes 64 coefficients",
+      "pass": true
+    },
+    {
+      "name": "Both learned models continue changing in wet conditions",
+      "pass": true
+    },
+    {
+      "name": "Day-cycle duration is an actual simulation parameter",
+      "pass": true
+    },
+    {
+      "name": "Night preset changes the actual world clock",
+      "pass": true
+    },
+    {
+      "name": "Live night rain maintains simulation pace",
+      "pass": true,
+      "detail": {
+        "fps": 56.69469904563927,
+        "renderMs": 3.022065778331661,
+        "workerTickMs": 0.11183802817950471,
+        "actualPace": 0.9991180199554782,
+        "backing": [
+          1720,
+          830
+        ],
+        "longTasks": [
+          69,
+          93,
+          92,
+          89,
+          102
+        ]
+      }
+    },
+    {
+      "name": "Follow camera uses the same independent live world",
+      "pass": true
+    },
+    {
+      "name": "Agent inspector shows route moisture and actual approach controls",
+      "pass": true
+    },
+    {
+      "name": "Compared plans expose authored prior and learned residual",
+      "pass": true
+    },
+    {
+      "name": "Other learner has its own inspector",
+      "pass": true
+    },
+    {
+      "name": "Discovery cards are generated from actual opportunities",
+      "pass": true
+    },
+    {
+      "name": "Failed opportunities are retained in the live journal",
+      "pass": true
+    },
+    {
+      "name": "Sequences are compared within environmental contexts",
+      "pass": true
+    },
+    {
+      "name": "Inspector does not announce unsupported invention",
+      "pass": true
+    },
+    {
+      "name": "Replay pauses live training instead of training on recorded data",
+      "pass": true
+    },
+    {
+      "name": "Replay carries recorded atmosphere and surface data",
+      "pass": true
+    },
+    {
+      "name": "Replay returns to the retained live world",
+      "pass": true
+    },
+    {
+      "name": "Manual historical snapshot adds real policies",
+      "pass": true
+    },
+    {
+      "name": "Archived Ember is frozen while Mica remains a learner",
+      "pass": true
+    },
+    {
+      "name": "Archived opponent is clearly disclosed",
+      "pass": true
+    },
+    {
+      "name": "Mode-switch rejection while sparring is handled without crashing",
+      "pass": true
+    },
+    {
+      "name": "Original live Ember policy is restored intact",
+      "pass": true
+    },
+    {
+      "name": "Historical evaluation runs in another worker",
+      "pass": true
+    },
+    {
+      "name": "Evaluation completes all 16 frozen games",
+      "pass": true
+    },
+    {
+      "name": "Live learners continue updating during the separate comparison",
+      "pass": true
+    },
+    {
+      "name": "Comparison result reports limited evidence, not guaranteed improvement",
+      "pass": true
+    },
+    {
+      "name": "Evaluation report persists inside full-world exports",
+      "pass": true
+    },
+    {
+      "name": "Saved-moment comparison generates both physical continuations",
+      "pass": true
+    },
+    {
+      "name": "Independent branch study does not modify its saved anchor",
+      "pass": true
+    },
+    {
+      "name": "Counterfactual original replay uses genuine recorded frames",
+      "pass": true
+    },
+    {
+      "name": "Variant replay is separately available",
+      "pass": true
+    },
+    {
+      "name": "Comparison worker can be cancelled safely",
+      "pass": true
+    },
+    {
+      "name": "Full save includes dynamics, traces, random states and replay codec",
+      "pass": true
+    },
+    {
+      "name": "Full file roundtrip restores exact physics and weather",
+      "pass": true
+    },
+    {
+      "name": "Full file roundtrip restores both learner traces",
+      "pass": true
+    },
+    {
+      "name": "Discovery clips survive full file import",
+      "pass": true
+    },
+    {
+      "name": "Invalid import is rejected atomically",
+      "pass": true
+    },
+    {
+      "name": "Storage denial is disclosed instead of falsely claiming an autosave",
+      "pass": true
+    },
+    {
+      "name": "Save-world button downloads a valid portable JSON file",
+      "pass": true
+    },
+    {
+      "name": "UI file import resumes the world",
+      "pass": true
+    },
+    {
+      "name": "Low-power setting lowers rendering pixels only",
+      "pass": true
+    },
+    {
+      "name": "30-fps presentation retains real-time simulation",
+      "pass": true
+    },
+    {
+      "name": "Manual interface palette cannot alter the physical clock",
+      "pass": true
+    },
+    {
+      "name": "Decorative weather effects can be disabled",
+      "pass": true
+    },
+    {
+      "name": "Ecological cellular model is a distinct selectable system",
+      "pass": true
+    },
+    {
+      "name": "Unmodified Conway model remains selectable",
+      "pass": true
+    },
+    {
+      "name": "Player can take over Mica",
+      "pass": true
+    },
+    {
+      "name": "Human control freezes Mica learning but not Ember",
+      "pass": true,
+      "detail": {
+        "updatesBefore": [
+          255,
+          216
+        ],
+        "updatesAfter": [
+          255,
+          239
+        ],
+        "goalPauseAtStart": 0,
+        "kickoffAtStart": -0.008333333333332282
+      }
+    },
+    {
+      "name": "Hidden-document pause releases held controls",
+      "pass": true
+    },
+    {
+      "name": "Procedural sound enables after a user gesture",
+      "pass": true
+    },
+    {
+      "name": "Sound can be muted",
+      "pass": true
+    },
+    {
+      "name": "Mobile viewport has no horizontal page overflow",
+      "pass": true
+    },
+    {
+      "name": "World instruments remain usable on mobile",
+      "pass": true
+    },
+    {
+      "name": "Small landscape layout has no horizontal overflow",
+      "pass": true
+    },
+    {
+      "name": "Focus mode removes world badge and chrome",
+      "pass": true
+    },
+    {
+      "name": "Discovery notices do not overlap the weather clock",
+      "pass": true
+    },
+    {
+      "name": "No browser JavaScript errors across all workflows",
+      "pass": true,
+      "detail": []
+    },
+    {
+      "name": "No remote assets requested during any workflow",
+      "pass": true
+    }
+  ],
+  "errors": [],
+  "measurements": {
+    "desktopDaylight": {
+      "fps": 60.00300015000748,
+      "renderMs": 2.199910282390944,
+      "workerTickMs": 0.08934190106648578,
+      "actualPace": 0.9999166736105045,
+      "backing": [
+        1720,
+        830
+      ],
+      "longTasks": [
+        69
+      ]
+    },
+    "desktopRainNight": {
+      "fps": 56.69469904563927,
+      "renderMs": 3.022065778331661,
+      "workerTickMs": 0.11183802817950471,
+      "actualPace": 0.9991180199554782,
+      "backing": [
+        1720,
+        830
+      ],
+      "longTasks": [
+        69,
+        93,
+        92,
+        89,
+        102
+      ]
+    },
+    "desktopFollowRain": {
+      "fps": 60.00300015000745,
+      "renderMs": 7.4503112489978065,
+      "workerTickMs": 0.1271557319409123,
+      "actualPace": 1.0000275869686737,
+      "backing": [
+        1720,
+        830
+      ],
+      "longTasks": [
+        69,
+        93,
+        92,
+        89,
+        102,
+        50
+      ]
+    },
+    "historicalEvaluation": {
+      "kind": "paired-evaluation",
+      "date": "2026-09-17T16:02:12.165Z",
+      "archiveId": 1,
+      "secondsPerGame": 35,
+      "gameCount": 16,
+      "frozen": true,
+      "agents": [
+        {
+          "agent": 0,
+          "trials": 4,
+          "goalDifferenceChange": -2,
+          "mean": -0.5,
+          "interval": [
+            -2.553972167938667,
+            1.5539721679386669
+          ],
+          "touchDifference": 12,
+          "allTied": false
+        },
+        {
+          "agent": 1,
+          "trials": 4,
+          "goalDifferenceChange": 0,
+          "mean": 0,
+          "interval": [
+            -2.904755296635731,
+            2.904755296635731
+          ],
+          "touchDifference": -15,
+          "allTied": false
+        }
+      ],
+      "rows": [
+        {
+          "agent": 0,
+          "condition": "dry",
+          "side": 0,
+          "seed": 771,
+          "baseline": {
+            "scoreFor": 1,
+            "scoreAgainst": 0,
+            "touches": 6,
+            "forwardImpulse": 3.976591347744444
+          },
+          "current": {
+            "scoreFor": 1,
+            "scoreAgainst": 1,
+            "touches": 12,
+            "forwardImpulse": 3.3101721014858
+          },
+          "delta": -1
+        },
+        {
+          "agent": 0,
+          "condition": "dry",
+          "side": 1,
+          "seed": 774,
+          "baseline": {
+            "scoreFor": 0,
+            "scoreAgainst": 1,
+            "touches": 4,
+            "forwardImpulse": 2.098834833042827
+          },
+          "current": {
+            "scoreFor": 0,
+            "scoreAgainst": 1,
+            "touches": 5,
+            "forwardImpulse": 2.753192460766163
+          },
+          "delta": 0
+        },
+        {
+          "agent": 0,
+          "condition": "wet",
+          "side": 0,
+          "seed": 818,
+          "baseline": {
+            "scoreFor": 1,
+            "scoreAgainst": 0,
+            "touches": 5,
+            "forwardImpulse": 2.239124094276125
+          },
+          "current": {
+            "scoreFor": 0,
+            "scoreAgainst": 1,
+            "touches": 9,
+            "forwardImpulse": 2.9910092533905255
+          },
+          "delta": -2
+        },
+        {
+          "agent": 0,
+          "condition": "wet",
+          "side": 1,
+          "seed": 821,
+          "baseline": {
+            "scoreFor": 1,
+            "scoreAgainst": 2,
+            "touches": 4,
+            "forwardImpulse": 3.4760268438917947
+          },
+          "current": {
+            "scoreFor": 1,
+            "scoreAgainst": 1,
+            "touches": 5,
+            "forwardImpulse": 3.6534708491582464
+          },
+          "delta": 1
+        },
+        {
+          "agent": 1,
+          "condition": "dry",
+          "side": 0,
+          "seed": 784,
+          "baseline": {
+            "scoreFor": 0,
+            "scoreAgainst": 0,
+            "touches": 8,
+            "forwardImpulse": 3.3796276956723768
+          },
+          "current": {
+            "scoreFor": 0,
+            "scoreAgainst": 2,
+            "touches": 4,
+            "forwardImpulse": 4
+          },
+          "delta": -2
+        },
+        {
+          "agent": 1,
+          "condition": "dry",
+          "side": 1,
+          "seed": 787,
+          "baseline": {
+            "scoreFor": 0,
+            "scoreAgainst": 0,
+            "touches": 8,
+            "forwardImpulse": 3.322972908459439
+          },
+          "current": {
+            "scoreFor": 0,
+            "scoreAgainst": 1,
+            "touches": 3,
+            "forwardImpulse": 2.1850387616645945
+          },
+          "delta": -1
+        },
+        {
+          "agent": 1,
+          "condition": "wet",
+          "side": 0,
+          "seed": 831,
+          "baseline": {
+            "scoreFor": 0,
+            "scoreAgainst": 0,
+            "touches": 15,
+            "forwardImpulse": 1.4851705388127832
+          },
+          "current": {
+            "scoreFor": 1,
+            "scoreAgainst": 0,
+            "touches": 3,
+            "forwardImpulse": 2.003901370115891
+          },
+          "delta": 1
+        },
+        {
+          "agent": 1,
+          "condition": "wet",
+          "side": 1,
+          "seed": 834,
+          "baseline": {
+            "scoreFor": 0,
+            "scoreAgainst": 1,
+            "touches": 4,
+            "forwardImpulse": 1.88825183917344
+          },
+          "current": {
+            "scoreFor": 1,
+            "scoreAgainst": 0,
+            "touches": 10,
+            "forwardImpulse": 2.806936886594145
+          },
+          "delta": 2
+        }
+      ],
+      "limitation": "Four paired starts per agent, two weather conditions, one archived opponent policy. Descriptive small-sample evidence, not proof of general improvement."
+    },
+    "worldSaveBytes": 1839273,
+    "lowPower": {
+      "fps": 30.00075001875046,
+      "renderMs": 2.7698732420904078,
+      "workerTickMs": 0.11367155990160985,
+      "actualPace": 0.9939534498475181,
+      "backing": [
+        944,
+        664
+      ],
+      "longTasks": [
+        118,
+        117,
+        122,
+        123,
+        130,
+        128,
+        62,
+        131,
+        139,
+        130
+      ]
+    }
+  },
+  "durationSeconds": 82.0,
+  "limitations": [
+    "Headless Chromium on the test host, not a gaming-GPU or user-laptop benchmark.",
+    "Document injection used: enterprise policy blocks file and HTTP URL navigation. Real-origin IndexedDB save/reload is not verified.",
+    "Fast-forward is used for history/replay coverage; performance samples use ordinary live playback."
+  ]
+}

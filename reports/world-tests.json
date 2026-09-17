@@ -1,0 +1,492 @@
+{
+  "date": "2026-09-17T16:01:03.742Z",
+  "passed": 47,
+  "failed": 0,
+  "results": [
+    {
+      "name": "Weather is reproducible from its own seed",
+      "pass": true
+    },
+    {
+      "name": "Atmospheric forcing differs across independent seeds",
+      "pass": true
+    },
+    {
+      "name": "A full simulated day advances the persistent clock",
+      "pass": true
+    },
+    {
+      "name": "Weather interventions change gradually, not instantaneously",
+      "pass": true
+    },
+    {
+      "name": "Weather rain reaches the actual moisture grid",
+      "pass": true
+    },
+    {
+      "name": "Canopy shelter receives less rainfall than exposed turf",
+      "pass": true
+    },
+    {
+      "name": "Clear skies do not instantly erase a wet surface",
+      "pass": true
+    },
+    {
+      "name": "Exposed daytime turf dries faster than night turf",
+      "pass": true
+    },
+    {
+      "name": "Night changes sunlight, not the agents exact state access",
+      "pass": true
+    },
+    {
+      "name": "Goals do not reset weather, surface or resource history",
+      "pass": true
+    },
+    {
+      "name": "Physical pause between goals still cools a hot engine",
+      "pass": true
+    },
+    {
+      "name": "Heat slows finite boost-pad regeneration",
+      "pass": true
+    },
+    {
+      "name": "Partly charged resources transfer only their available energy",
+      "pass": true
+    },
+    {
+      "name": "Crosswind changes airborne ball trajectories",
+      "pass": true
+    },
+    {
+      "name": "Heavy props accelerate less under the same wind",
+      "pass": true
+    },
+    {
+      "name": "Every candidate carries 64 finite, action-specific features",
+      "pass": true
+    },
+    {
+      "name": "Changing a learned weather coefficient changes relative plan values",
+      "pass": true
+    },
+    {
+      "name": "Plans include actual braking, wet-route, wind and pad estimates",
+      "pass": true
+    },
+    {
+      "name": "A frozen archived opponent does not learn while its peer does",
+      "pass": true
+    },
+    {
+      "name": "Legacy 26-weight policies migrate without erasing old weights",
+      "pass": true
+    },
+    {
+      "name": "Ecological tire damage is separate from pure Conway rules",
+      "pass": true
+    },
+    {
+      "name": "Hot, dry conditions suppress ecological growth",
+      "pass": true
+    },
+    {
+      "name": "Ecological growth changes the same grip sample used by physics",
+      "pass": true
+    },
+    {
+      "name": "Full snapshots contain the clock, RNG, fields, traces and replays",
+      "pass": true
+    },
+    {
+      "name": "Full restore continues exact physical state over 20 seconds",
+      "pass": true
+    },
+    {
+      "name": "A saved live world and its restored copy stay bit-identical",
+      "pass": true
+    },
+    {
+      "name": "Saved Conway/ecological clocks and RNG resume exactly",
+      "pass": true
+    },
+    {
+      "name": "Full import preserves the entire learner session immediately",
+      "pass": true
+    },
+    {
+      "name": "Restored worlds cannot mutate their source file object",
+      "pass": true
+    },
+    {
+      "name": "Journal replay clips survive export and import",
+      "pass": true
+    },
+    {
+      "name": "Observer records unsuccessful attempts, not only highlights",
+      "pass": true
+    },
+    {
+      "name": "Novelty uses a 24-value temporal embedding independent of outcome",
+      "pass": true
+    },
+    {
+      "name": "Single sightings cannot satisfy recurrence or learning thresholds",
+      "pass": true
+    },
+    {
+      "name": "Wilson intervals keep sparse observations uncertain",
+      "pass": true
+    },
+    {
+      "name": "Learning-associated label needs peer evidence and preference change",
+      "pass": true
+    },
+    {
+      "name": "Malformed full-world physics is rejected before application",
+      "pass": true
+    },
+    {
+      "name": "Malformed field dimensions are rejected",
+      "pass": true
+    },
+    {
+      "name": "Prototype-bearing JSON keys are rejected",
+      "pass": true
+    },
+    {
+      "name": "Runtime exposes a versioned full-world file",
+      "pass": true
+    },
+    {
+      "name": "Runtime pause does not alter weather state",
+      "pass": true
+    },
+    {
+      "name": "Invalid import leaves the current world untouched",
+      "pass": true
+    },
+    {
+      "name": "Historical sparring preserves the live opponent policy",
+      "pass": true
+    },
+    {
+      "name": "Manual moment capture does not reset the live world",
+      "pass": true
+    },
+    {
+      "name": "Switching modes preserves atmosphere and field history",
+      "pass": true
+    },
+    {
+      "name": "Resetting learners does not reset the physical world",
+      "pass": true
+    },
+    {
+      "name": "Frozen evaluation reproduces identical policy comparisons",
+      "pass": true
+    },
+    {
+      "name": "Counterfactual branches do not modify the saved anchor",
+      "pass": true
+    }
+  ],
+  "measurements": {
+    "saveBytes": 1205589,
+    "identicalPolicyEvaluation": {
+      "kind": "paired-evaluation",
+      "date": "2026-09-17T16:01:03.217Z",
+      "archiveId": 1,
+      "secondsPerGame": 12,
+      "gameCount": 16,
+      "frozen": true,
+      "agents": [
+        {
+          "agent": 0,
+          "trials": 4,
+          "goalDifferenceChange": 0,
+          "mean": 0,
+          "interval": [
+            0,
+            0
+          ],
+          "touchDifference": 0,
+          "allTied": true
+        },
+        {
+          "agent": 1,
+          "trials": 4,
+          "goalDifferenceChange": 0,
+          "mean": 0,
+          "interval": [
+            0,
+            0
+          ],
+          "touchDifference": 0,
+          "allTied": true
+        }
+      ],
+      "rows": [
+        {
+          "agent": 0,
+          "condition": "dry",
+          "side": 0,
+          "seed": 771,
+          "baseline": {
+            "scoreFor": 1,
+            "scoreAgainst": 0,
+            "touches": 2,
+            "forwardImpulse": 2
+          },
+          "current": {
+            "scoreFor": 1,
+            "scoreAgainst": 0,
+            "touches": 2,
+            "forwardImpulse": 2
+          },
+          "delta": 0
+        },
+        {
+          "agent": 0,
+          "condition": "dry",
+          "side": 1,
+          "seed": 774,
+          "baseline": {
+            "scoreFor": 0,
+            "scoreAgainst": 0,
+            "touches": 1,
+            "forwardImpulse": 1
+          },
+          "current": {
+            "scoreFor": 0,
+            "scoreAgainst": 0,
+            "touches": 1,
+            "forwardImpulse": 1
+          },
+          "delta": 0
+        },
+        {
+          "agent": 0,
+          "condition": "wet",
+          "side": 0,
+          "seed": 818,
+          "baseline": {
+            "scoreFor": 0,
+            "scoreAgainst": 0,
+            "touches": 2,
+            "forwardImpulse": 0.8772884677955318
+          },
+          "current": {
+            "scoreFor": 0,
+            "scoreAgainst": 0,
+            "touches": 2,
+            "forwardImpulse": 0.8772884677955318
+          },
+          "delta": 0
+        },
+        {
+          "agent": 0,
+          "condition": "wet",
+          "side": 1,
+          "seed": 821,
+          "baseline": {
+            "scoreFor": 0,
+            "scoreAgainst": 1,
+            "touches": 1,
+            "forwardImpulse": 1
+          },
+          "current": {
+            "scoreFor": 0,
+            "scoreAgainst": 1,
+            "touches": 1,
+            "forwardImpulse": 1
+          },
+          "delta": 0
+        },
+        {
+          "agent": 1,
+          "condition": "dry",
+          "side": 0,
+          "seed": 784,
+          "baseline": {
+            "scoreFor": 0,
+            "scoreAgainst": 0,
+            "touches": 5,
+            "forwardImpulse": 2.0314340227954584
+          },
+          "current": {
+            "scoreFor": 0,
+            "scoreAgainst": 0,
+            "touches": 5,
+            "forwardImpulse": 2.0314340227954584
+          },
+          "delta": 0
+        },
+        {
+          "agent": 1,
+          "condition": "dry",
+          "side": 1,
+          "seed": 787,
+          "baseline": {
+            "scoreFor": 0,
+            "scoreAgainst": 0,
+            "touches": 2,
+            "forwardImpulse": 2
+          },
+          "current": {
+            "scoreFor": 0,
+            "scoreAgainst": 0,
+            "touches": 2,
+            "forwardImpulse": 2
+          },
+          "delta": 0
+        },
+        {
+          "agent": 1,
+          "condition": "wet",
+          "side": 0,
+          "seed": 831,
+          "baseline": {
+            "scoreFor": 0,
+            "scoreAgainst": 0,
+            "touches": 2,
+            "forwardImpulse": 1.03691261118084
+          },
+          "current": {
+            "scoreFor": 0,
+            "scoreAgainst": 0,
+            "touches": 2,
+            "forwardImpulse": 1.03691261118084
+          },
+          "delta": 0
+        },
+        {
+          "agent": 1,
+          "condition": "wet",
+          "side": 1,
+          "seed": 834,
+          "baseline": {
+            "scoreFor": 0,
+            "scoreAgainst": 1,
+            "touches": 2,
+            "forwardImpulse": 0.8852495012450531
+          },
+          "current": {
+            "scoreFor": 0,
+            "scoreAgainst": 1,
+            "touches": 2,
+            "forwardImpulse": 0.8852495012450531
+          },
+          "delta": 0
+        }
+      ],
+      "limitation": "Four paired starts per agent, two weather conditions, one archived opponent policy. Descriptive small-sample evidence, not proof of general improvement."
+    },
+    "branch": {
+      "variant": "wet",
+      "cases": [
+        {
+          "variant": "recorded",
+          "score": [
+            1,
+            1
+          ],
+          "touches": [
+            7,
+            4
+          ],
+          "quality": [
+            0.3649519185515159,
+            0.6206347983642373
+          ],
+          "stats": {
+            "assists": 0,
+            "teamBumps": 0,
+            "touches": 65,
+            "goals": 2,
+            "air": 1,
+            "saves": 0,
+            "passes": 0,
+            "bumps": 11,
+            "dodges": 0,
+            "wallTouches": 4,
+            "safetyResets": 0
+          },
+          "seconds": 18,
+          "weather": {
+            "clock": 0.7466666666664792,
+            "day": 1,
+            "dayLength": 600,
+            "phase": "Dusk",
+            "label": "Drizzle",
+            "mode": "auto",
+            "cloud": 0.7167369010475322,
+            "rain": 0.4000431033007704,
+            "sun": 0.020942419884535022,
+            "light": 0.2124309968306264,
+            "temperature": 10.163925595125429,
+            "windX": 3.2554770399917112,
+            "windZ": 1.0901803508330452,
+            "airSpeed": 3.433165296815121,
+            "windScale": 1
+          },
+          "scoreDelta": [
+            0,
+            0
+          ]
+        },
+        {
+          "variant": "wet",
+          "score": [
+            1,
+            1
+          ],
+          "touches": [
+            6,
+            1
+          ],
+          "quality": [
+            1.2050519966757536,
+            0.7116353276705233
+          ],
+          "stats": {
+            "assists": 0,
+            "teamBumps": 0,
+            "touches": 61,
+            "goals": 2,
+            "air": 1,
+            "saves": 0,
+            "passes": 0,
+            "bumps": 9,
+            "dodges": 0,
+            "wallTouches": 2,
+            "safetyResets": 0
+          },
+          "seconds": 18,
+          "weather": {
+            "clock": 0.7466666666664792,
+            "day": 1,
+            "dayLength": 600,
+            "phase": "Dusk",
+            "label": "Drizzle",
+            "mode": "auto",
+            "cloud": 0.7167369010475322,
+            "rain": 0.4000431033007704,
+            "sun": 0.020942419884535022,
+            "light": 0.2124309968306264,
+            "temperature": 10.163925595125429,
+            "windX": 3.2554770399917112,
+            "windZ": 1.0901803508330452,
+            "airSpeed": 3.433165296815121,
+            "windScale": 1
+          },
+          "scoreDelta": [
+            0,
+            0
+          ]
+        }
+      ]
+    }
+  }
+}

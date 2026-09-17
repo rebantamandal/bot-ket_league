@@ -1,0 +1,27 @@
+{
+  "edition": 11,
+  "htmlSha256": "7e075814a84c016feb9f90a09cc14ef1dcd7e6a52e3ce82ae82efe6f8d36d11c",
+  "gameplayBrowserStabilityPassed": 387,
+  "failed": 0,
+  "buildChecksPassed": 18,
+  "skipped": [
+    {
+      "name": "Actual WebGL rendering and GPU-context-loss tests",
+      "reason": "The test host returns null for a bare WebGL2 context, including explicit SwiftShader. GPU rendering is unverified in this run."
+    }
+  ],
+  "unchangedFrom10": [
+    "math.js",
+    "weather.js",
+    "field.js"
+  ],
+  "stressMinutes": 24,
+  "observedTotals": {
+    "touches": 764,
+    "passes": 50,
+    "assists": 5,
+    "goals": 43,
+    "safetyResets": 0
+  },
+  "learningClaim": "Four independent online residual learners over authored driving and team-planning capabilities; no demonstrated strength increase."
+}

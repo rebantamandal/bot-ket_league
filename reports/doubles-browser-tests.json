@@ -1,0 +1,316 @@
+{
+  "htmlSha256": "1abfd8ec2cf48e44fcbe81b4886201c7bc8df9bf67bb66517acf0a4a8cca47c2",
+  "passed": 71,
+  "failed": 0,
+  "results": [
+    {
+      "name": "Single-file release starts without external network assets",
+      "pass": true
+    },
+    {
+      "name": "1v1 remains the default with its original two-player roster",
+      "pass": true
+    },
+    {
+      "name": "Two visible format buttons expose selected state",
+      "pass": true
+    },
+    {
+      "name": "Additional agent cameras are hidden in 1v1",
+      "pass": true
+    },
+    {
+      "name": "Clicking 2v2 changes the real worker roster",
+      "pass": true
+    },
+    {
+      "name": "2v2 selection is reflected in the format buttons and settings",
+      "pass": true
+    },
+    {
+      "name": "2v2 shows team score labels, not two individual-player scores",
+      "pass": true
+    },
+    {
+      "name": "Extra camera buttons are available for both new agents",
+      "pass": true
+    },
+    {
+      "name": "Both renderers have distinct models for all four cars",
+      "pass": true
+    },
+    {
+      "name": "All four policies update during ordinary real-time play",
+      "pass": true
+    },
+    {
+      "name": "Four-player simulation stays in its own worker",
+      "pass": true
+    },
+    {
+      "name": "Pause freezes all four learners and the physical world",
+      "pass": true
+    },
+    {
+      "name": "Portable export identifies the four-player format",
+      "pass": true
+    },
+    {
+      "name": "Existing Atelier interface remains flat, not skeuomorphic",
+      "pass": true
+    },
+    {
+      "name": "Mica follow camera selects a valid distinct player",
+      "pass": true
+    },
+    {
+      "name": "Ember follow camera selects a valid distinct player",
+      "pass": true
+    },
+    {
+      "name": "Slate follow camera selects a valid distinct player",
+      "pass": true
+    },
+    {
+      "name": "Sienna follow camera selects a valid distinct player",
+      "pass": true
+    },
+    {
+      "name": "Follow background cache includes the full field, avoiding clipped borders",
+      "pass": true
+    },
+    {
+      "name": "Fieldnotes offers all four agent tabs",
+      "pass": true
+    },
+    {
+      "name": "Slate has a separate portrait and learned-state readout",
+      "pass": true
+    },
+    {
+      "name": "Team readout identifies Slate as blue, not orange",
+      "pass": true
+    },
+    {
+      "name": "Sienna has a separate portrait and orange-team context",
+      "pass": true
+    },
+    {
+      "name": "Team readout reports actual received-pass and assist counters",
+      "pass": true
+    },
+    {
+      "name": "Follow selected agent follows Sienna, not Ember",
+      "pass": true
+    },
+    {
+      "name": "Keyboard 5 follows Slate",
+      "pass": true
+    },
+    {
+      "name": "Keyboard 6 follows Sienna",
+      "pass": true
+    },
+    {
+      "name": "Observer records sequences for the added agents",
+      "pass": true
+    },
+    {
+      "name": "Every reported learned parameter is finite",
+      "pass": true
+    },
+    {
+      "name": "2v2 full-state import restores all physical players",
+      "pass": true
+    },
+    {
+      "name": "All four learned policies survive full-state import",
+      "pass": true
+    },
+    {
+      "name": "Discovery entries safely label Slate and Sienna",
+      "pass": true
+    },
+    {
+      "name": "Recorded sequence contains all four physical agents",
+      "pass": true
+    },
+    {
+      "name": "Replay does not show current team plans as historical evidence",
+      "pass": true
+    },
+    {
+      "name": "Returning live restores four-player scene",
+      "pass": true
+    },
+    {
+      "name": "Switching back removes additional physics bodies and brains",
+      "pass": true
+    },
+    {
+      "name": "Removed-player selection and follow camera fall back safely",
+      "pass": true
+    },
+    {
+      "name": "Additional player controls are hidden again",
+      "pass": true
+    },
+    {
+      "name": "Returning to 2v2 keeps its four distinct learned policies",
+      "pass": true
+    },
+    {
+      "name": "Player can take over Mica without removing other three agents",
+      "pass": true
+    },
+    {
+      "name": "Learning switch freezes all four policies while physics runs",
+      "pass": true
+    },
+    {
+      "name": "Historical team mode freezes both orange agents",
+      "pass": true
+    },
+    {
+      "name": "Historical team comparison is enabled in 2v2",
+      "pass": true
+    },
+    {
+      "name": "History control describes the whole orange team",
+      "pass": true
+    },
+    {
+      "name": "Rain and nighttime work with all four agents",
+      "pass": true
+    },
+    {
+      "name": "Heavy-ball interventions coexist with four players",
+      "pass": true
+    },
+    {
+      "name": "Living surface still operates in team matches",
+      "pass": true
+    },
+    {
+      "name": "desktop has no horizontal document overflow",
+      "pass": true
+    },
+    {
+      "name": "desktop keeps the match switch in the viewport",
+      "pass": true
+    },
+    {
+      "name": "desktop has usable camera controls",
+      "pass": true
+    },
+    {
+      "name": "tablet has no horizontal document overflow",
+      "pass": true
+    },
+    {
+      "name": "tablet keeps the match switch in the viewport",
+      "pass": true
+    },
+    {
+      "name": "tablet has usable camera controls",
+      "pass": true
+    },
+    {
+      "name": "mobile has no horizontal document overflow",
+      "pass": true
+    },
+    {
+      "name": "mobile keeps the match switch in the viewport",
+      "pass": true
+    },
+    {
+      "name": "mobile has usable camera controls",
+      "pass": true
+    },
+    {
+      "name": "Mobile inspector correctly makes the arena inert",
+      "pass": true
+    },
+    {
+      "name": "Mobile inspector shows and selects Sienna",
+      "pass": true
+    },
+    {
+      "name": "Mobile keyboard focus stays inside Fieldnotes",
+      "pass": true
+    },
+    {
+      "name": "Escape restores interactive arena controls",
+      "pass": true
+    },
+    {
+      "name": "compact mobile has no horizontal document overflow",
+      "pass": true
+    },
+    {
+      "name": "compact mobile keeps the match switch in the viewport",
+      "pass": true
+    },
+    {
+      "name": "compact mobile has usable camera controls",
+      "pass": true
+    },
+    {
+      "name": "landscape has no horizontal document overflow",
+      "pass": true
+    },
+    {
+      "name": "landscape keeps the match switch in the viewport",
+      "pass": true
+    },
+    {
+      "name": "landscape has usable camera controls",
+      "pass": true
+    },
+    {
+      "name": "Reset clears every 2v2 learner, not only Mica and Ember",
+      "pass": true
+    },
+    {
+      "name": "Reset keeps the four-player format and systemic world",
+      "pass": true
+    },
+    {
+      "name": "No uncaught page errors across all team workflows",
+      "pass": true,
+      "detail": []
+    },
+    {
+      "name": "WebGL2 renders all four meshes without a shader or uniform error",
+      "pass": true,
+      "detail": {
+        "kind": "WebGL2 / Atelier",
+        "gl": true,
+        "error": 0,
+        "models": 4,
+        "cars": 4
+      }
+    },
+    {
+      "name": "Graphics-context loss preserves the live four-player world",
+      "pass": true
+    }
+  ],
+  "skipped": [],
+  "measurements": {
+    "exportBytes": 2199278,
+    "webgl": {
+      "kind": "WebGL2 / Atelier",
+      "gl": true,
+      "error": 0,
+      "models": 4,
+      "cars": 4
+    }
+  },
+  "errors": [],
+  "seconds": 35.01961588859558,
+  "limitations": [
+    "Document injection: file/HTTP URL navigation is blocked in this test browser. Real-origin autosave reload not verified.",
+    "Canvas is tested directly; see skipped for WebGL availability. No native gaming-GPU benchmark."
+  ]
+}

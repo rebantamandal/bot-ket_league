@@ -1,0 +1,71 @@
+{
+  "htmlSha256": "1abfd8ec2cf48e44fcbe81b4886201c7bc8df9bf67bb66517acf0a4a8cca47c2",
+  "passed": 16,
+  "failed": 0,
+  "results": [
+    {
+      "name": "Rebuild is byte-identical to the delivered HTML",
+      "pass": true
+    },
+    {
+      "name": "All source placeholders were expanded",
+      "pass": true
+    },
+    {
+      "name": "There are no external script, image or stylesheet dependencies",
+      "pass": true
+    },
+    {
+      "name": "Four embedded scripts retain the offline worker architecture",
+      "pass": true
+    },
+    {
+      "name": "math.js parses as JavaScript",
+      "pass": true
+    },
+    {
+      "name": "weather.js parses as JavaScript",
+      "pass": true
+    },
+    {
+      "name": "field.js parses as JavaScript",
+      "pass": true
+    },
+    {
+      "name": "physics.js parses as JavaScript",
+      "pass": true
+    },
+    {
+      "name": "agents.js parses as JavaScript",
+      "pass": true
+    },
+    {
+      "name": "observer.js parses as JavaScript",
+      "pass": true
+    },
+    {
+      "name": "state.js parses as JavaScript",
+      "pass": true
+    },
+    {
+      "name": "evaluation.js parses as JavaScript",
+      "pass": true
+    },
+    {
+      "name": "runtime.js parses as JavaScript",
+      "pass": true
+    },
+    {
+      "name": "renderer.js parses as JavaScript",
+      "pass": true
+    },
+    {
+      "name": "renderer-atelier.js parses as JavaScript",
+      "pass": true
+    },
+    {
+      "name": "app.js parses as JavaScript",
+      "pass": true
+    }
+  ]
+}

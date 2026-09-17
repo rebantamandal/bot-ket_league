@@ -1,0 +1,844 @@
+{
+  "date": "2026-09-17T11:41:29.443Z",
+  "seedCount": 8,
+  "simulatedMinutes": 24,
+  "passed": 32,
+  "failed": 0,
+  "wallSeconds": 25.824,
+  "sourceSha256": "9e83cffe0d37df5fc7766821c4119b444ed85cee0d38ba31a27d55bfb2817f48",
+  "rows": [
+    {
+      "seed": 1211,
+      "seconds": 180,
+      "condition": "fair",
+      "score": [
+        2,
+        1
+      ],
+      "stats": {
+        "touches": 92,
+        "goals": 3,
+        "air": 10,
+        "saves": 3,
+        "passes": 10,
+        "bumps": 70,
+        "dodges": 5,
+        "wallTouches": 4,
+        "safetyResets": 0,
+        "assists": 1,
+        "teamBumps": 16
+      },
+      "updates": [
+        496,
+        490,
+        489,
+        492
+      ],
+      "norms": [
+        0.23580017001907158,
+        0.24980074806173044,
+        0.16967464578069763,
+        0.23636987748006236
+      ],
+      "touches": [
+        26,
+        17,
+        19,
+        30
+      ],
+      "roles": [
+        {
+          "none": 5,
+          "support": 44,
+          "clear": 18,
+          "cover": 28,
+          "attack": 31,
+          "setup": 29,
+          "refuel": 1,
+          "pass": 22,
+          "shadow": 2
+        },
+        {
+          "none": 5,
+          "support": 34,
+          "attack": 12,
+          "setup": 41,
+          "pass": 32,
+          "cover": 52,
+          "refuel": 2,
+          "clear": 2
+        },
+        {
+          "none": 5,
+          "attack": 18,
+          "pass": 21,
+          "setup": 19,
+          "clear": 12,
+          "cover": 52,
+          "support": 51,
+          "refuel": 2
+        },
+        {
+          "none": 5,
+          "attack": 21,
+          "setup": 20,
+          "pass": 14,
+          "support": 71,
+          "cover": 18,
+          "clear": 29,
+          "shadow": 2
+        }
+      ],
+      "nonFiniteSamples": 0,
+      "maxSpeed": 45.62123488924949,
+      "maxBallSpeed": 55.820045397103186
+    },
+    {
+      "seed": 1384,
+      "seconds": 180,
+      "condition": "rain",
+      "score": [
+        2,
+        2
+      ],
+      "stats": {
+        "touches": 116,
+        "goals": 4,
+        "air": 12,
+        "saves": 0,
+        "passes": 4,
+        "bumps": 74,
+        "dodges": 4,
+        "wallTouches": 8,
+        "safetyResets": 0,
+        "assists": 0,
+        "teamBumps": 9
+      },
+      "updates": [
+        459,
+        467,
+        466,
+        463
+      ],
+      "norms": [
+        0.14684553285788074,
+        0.19200965890311825,
+        0.22641355881511188,
+        0.1849945125108437
+      ],
+      "touches": [
+        7,
+        34,
+        47,
+        28
+      ],
+      "roles": [
+        {
+          "none": 6,
+          "support": 77,
+          "cover": 33,
+          "attack": 12,
+          "pass": 22,
+          "shadow": 4,
+          "clear": 7,
+          "setup": 19
+        },
+        {
+          "none": 6,
+          "support": 41,
+          "shadow": 3,
+          "clear": 11,
+          "pass": 22,
+          "attack": 26,
+          "setup": 25,
+          "cover": 46
+        },
+        {
+          "none": 6,
+          "attack": 35,
+          "pass": 33,
+          "setup": 29,
+          "clear": 11,
+          "support": 40,
+          "cover": 24,
+          "refuel": 2
+        },
+        {
+          "none": 6,
+          "attack": 18,
+          "cover": 28,
+          "support": 59,
+          "setup": 29,
+          "pass": 20,
+          "clear": 15,
+          "shadow": 3,
+          "refuel": 2
+        }
+      ],
+      "nonFiniteSamples": 0,
+      "maxSpeed": 43.21675916953534,
+      "maxBallSpeed": 45.32513986587233
+    },
+    {
+      "seed": 1557,
+      "seconds": 180,
+      "condition": "wind",
+      "score": [
+        5,
+        2
+      ],
+      "stats": {
+        "touches": 76,
+        "goals": 7,
+        "air": 18,
+        "saves": 0,
+        "passes": 4,
+        "bumps": 70,
+        "dodges": 5,
+        "wallTouches": 3,
+        "safetyResets": 0,
+        "assists": 0,
+        "teamBumps": 11
+      },
+      "updates": [
+        438,
+        469,
+        460,
+        441
+      ],
+      "norms": [
+        0.1899147446636146,
+        0.2680461969761055,
+        0.22481129965160995,
+        0.2329380157785444
+      ],
+      "touches": [
+        18,
+        17,
+        15,
+        26
+      ],
+      "roles": [
+        {
+          "none": 9,
+          "support": 62,
+          "attack": 27,
+          "setup": 17,
+          "pass": 13,
+          "refuel": 5,
+          "cover": 40,
+          "clear": 7
+        },
+        {
+          "none": 9,
+          "support": 29,
+          "pass": 23,
+          "clear": 25,
+          "attack": 24,
+          "setup": 26,
+          "refuel": 3,
+          "shadow": 4,
+          "cover": 37
+        },
+        {
+          "none": 9,
+          "attack": 30,
+          "support": 51,
+          "setup": 38,
+          "cover": 18,
+          "pass": 17,
+          "clear": 12,
+          "shadow": 3,
+          "refuel": 2
+        },
+        {
+          "none": 9,
+          "attack": 16,
+          "support": 44,
+          "cover": 61,
+          "setup": 22,
+          "clear": 16,
+          "pass": 9,
+          "shadow": 2,
+          "refuel": 1
+        }
+      ],
+      "nonFiniteSamples": 0,
+      "maxSpeed": 44.98877326399379,
+      "maxBallSpeed": 54.33969860661523
+    },
+    {
+      "seed": 1730,
+      "seconds": 180,
+      "condition": "ecology",
+      "score": [
+        2,
+        3
+      ],
+      "stats": {
+        "touches": 95,
+        "goals": 5,
+        "air": 12,
+        "saves": 1,
+        "passes": 6,
+        "bumps": 58,
+        "dodges": 3,
+        "wallTouches": 5,
+        "safetyResets": 0,
+        "assists": 0,
+        "teamBumps": 9
+      },
+      "updates": [
+        453,
+        464,
+        457,
+        468
+      ],
+      "norms": [
+        0.21935448214838194,
+        0.20590753437231982,
+        0.18551531536026183,
+        0.14891414751475074
+      ],
+      "touches": [
+        21,
+        24,
+        28,
+        22
+      ],
+      "roles": [
+        {
+          "none": 7,
+          "support": 66,
+          "shadow": 3,
+          "cover": 33,
+          "pass": 17,
+          "setup": 20,
+          "attack": 19,
+          "clear": 13,
+          "refuel": 2
+        },
+        {
+          "none": 7,
+          "support": 42,
+          "setup": 17,
+          "cover": 49,
+          "pass": 27,
+          "attack": 23,
+          "shadow": 7,
+          "clear": 8
+        },
+        {
+          "none": 7,
+          "attack": 17,
+          "cover": 40,
+          "clear": 21,
+          "support": 34,
+          "pass": 30,
+          "setup": 25,
+          "shadow": 2,
+          "refuel": 4
+        },
+        {
+          "none": 7,
+          "attack": 20,
+          "refuel": 6,
+          "setup": 19,
+          "support": 54,
+          "pass": 21,
+          "clear": 19,
+          "cover": 29,
+          "shadow": 5
+        }
+      ],
+      "nonFiniteSamples": 0,
+      "maxSpeed": 38.19876882639109,
+      "maxBallSpeed": 42.15653310823639
+    },
+    {
+      "seed": 1903,
+      "seconds": 180,
+      "condition": "fair",
+      "score": [
+        4,
+        1
+      ],
+      "stats": {
+        "touches": 136,
+        "goals": 5,
+        "air": 14,
+        "saves": 0,
+        "passes": 5,
+        "bumps": 83,
+        "dodges": 7,
+        "wallTouches": 4,
+        "safetyResets": 0,
+        "assists": 2,
+        "teamBumps": 15
+      },
+      "updates": [
+        472,
+        472,
+        475,
+        465
+      ],
+      "norms": [
+        0.18056441690140115,
+        0.237239861289827,
+        0.20688484670526686,
+        0.25487783363710187
+      ],
+      "touches": [
+        17,
+        55,
+        42,
+        22
+      ],
+      "roles": [
+        {
+          "none": 7,
+          "support": 45,
+          "pass": 28,
+          "setup": 16,
+          "clear": 12,
+          "cover": 55,
+          "attack": 16,
+          "shadow": 1
+        },
+        {
+          "none": 7,
+          "support": 56,
+          "cover": 38,
+          "setup": 13,
+          "attack": 14,
+          "clear": 24,
+          "pass": 26,
+          "shadow": 1,
+          "refuel": 1
+        },
+        {
+          "none": 7,
+          "attack": 28,
+          "support": 48,
+          "cover": 24,
+          "pass": 14,
+          "clear": 23,
+          "setup": 35,
+          "refuel": 1
+        },
+        {
+          "none": 7,
+          "attack": 19,
+          "pass": 29,
+          "setup": 35,
+          "cover": 41,
+          "clear": 7,
+          "support": 39,
+          "shadow": 2,
+          "refuel": 1
+        }
+      ],
+      "nonFiniteSamples": 0,
+      "maxSpeed": 39.20031328011408,
+      "maxBallSpeed": 44.38480155044728
+    },
+    {
+      "seed": 2076,
+      "seconds": 180,
+      "condition": "rain",
+      "score": [
+        4,
+        2
+      ],
+      "stats": {
+        "touches": 75,
+        "goals": 6,
+        "air": 25,
+        "saves": 1,
+        "passes": 9,
+        "bumps": 72,
+        "dodges": 6,
+        "wallTouches": 3,
+        "safetyResets": 0,
+        "assists": 1,
+        "teamBumps": 8
+      },
+      "updates": [
+        445,
+        454,
+        456,
+        450
+      ],
+      "norms": [
+        0.19865599870566908,
+        0.23949358469619486,
+        0.1701473878215847,
+        0.2580844039218407
+      ],
+      "touches": [
+        13,
+        14,
+        25,
+        23
+      ],
+      "roles": [
+        {
+          "none": 8,
+          "support": 47,
+          "refuel": 9,
+          "clear": 9,
+          "pass": 11,
+          "setup": 21,
+          "cover": 48,
+          "attack": 21,
+          "shadow": 6
+        },
+        {
+          "none": 8,
+          "support": 54,
+          "attack": 26,
+          "setup": 28,
+          "pass": 12,
+          "clear": 19,
+          "cover": 25,
+          "refuel": 1,
+          "shadow": 7
+        },
+        {
+          "none": 8,
+          "attack": 40,
+          "cover": 41,
+          "support": 36,
+          "refuel": 1,
+          "clear": 17,
+          "setup": 26,
+          "pass": 8,
+          "shadow": 3
+        },
+        {
+          "none": 8,
+          "attack": 15,
+          "support": 45,
+          "refuel": 3,
+          "cover": 47,
+          "setup": 28,
+          "pass": 24,
+          "clear": 7,
+          "shadow": 3
+        }
+      ],
+      "nonFiniteSamples": 0,
+      "maxSpeed": 45.159962561044615,
+      "maxBallSpeed": 54.31753030009274
+    },
+    {
+      "seed": 2249,
+      "seconds": 180,
+      "condition": "wind",
+      "score": [
+        3,
+        6
+      ],
+      "stats": {
+        "touches": 99,
+        "goals": 9,
+        "air": 15,
+        "saves": 1,
+        "passes": 5,
+        "bumps": 65,
+        "dodges": 3,
+        "wallTouches": 2,
+        "safetyResets": 0,
+        "assists": 1,
+        "teamBumps": 8
+      },
+      "updates": [
+        434,
+        446,
+        445,
+        438
+      ],
+      "norms": [
+        0.28329349987443214,
+        0.22034370485721805,
+        0.26474697333189345,
+        0.24785930681411067
+      ],
+      "touches": [
+        44,
+        11,
+        24,
+        20
+      ],
+      "roles": [
+        {
+          "none": 10,
+          "support": 44,
+          "shadow": 3,
+          "cover": 48,
+          "attack": 26,
+          "pass": 17,
+          "refuel": 6,
+          "setup": 12,
+          "clear": 14
+        },
+        {
+          "none": 10,
+          "support": 51,
+          "attack": 27,
+          "cover": 41,
+          "setup": 10,
+          "pass": 17,
+          "shadow": 7,
+          "clear": 17
+        },
+        {
+          "none": 10,
+          "attack": 22,
+          "cover": 32,
+          "setup": 24,
+          "support": 47,
+          "clear": 21,
+          "pass": 22,
+          "refuel": 1,
+          "shadow": 1
+        },
+        {
+          "none": 10,
+          "attack": 31,
+          "support": 35,
+          "setup": 27,
+          "cover": 43,
+          "clear": 18,
+          "pass": 11,
+          "refuel": 3,
+          "shadow": 2
+        }
+      ],
+      "nonFiniteSamples": 0,
+      "maxSpeed": 45.306404236734544,
+      "maxBallSpeed": 58.00141200528567
+    },
+    {
+      "seed": 2422,
+      "seconds": 180,
+      "condition": "ecology",
+      "score": [
+        2,
+        2
+      ],
+      "stats": {
+        "touches": 75,
+        "goals": 4,
+        "air": 6,
+        "saves": 0,
+        "passes": 7,
+        "bumps": 62,
+        "dodges": 1,
+        "wallTouches": 2,
+        "safetyResets": 0,
+        "assists": 0,
+        "teamBumps": 17
+      },
+      "updates": [
+        456,
+        468,
+        462,
+        446
+      ],
+      "norms": [
+        0.19100701523906627,
+        0.22970515443177186,
+        0.14841941096651262,
+        0.16313560779810365
+      ],
+      "touches": [
+        24,
+        29,
+        14,
+        8
+      ],
+      "roles": [
+        {
+          "none": 6,
+          "support": 39,
+          "attack": 15,
+          "setup": 39,
+          "cover": 35,
+          "clear": 15,
+          "pass": 25,
+          "shadow": 6
+        },
+        {
+          "none": 6,
+          "support": 38,
+          "pass": 32,
+          "clear": 15,
+          "attack": 31,
+          "setup": 22,
+          "cover": 28,
+          "refuel": 6,
+          "shadow": 2
+        },
+        {
+          "none": 6,
+          "attack": 17,
+          "support": 67,
+          "setup": 24,
+          "pass": 25,
+          "cover": 33,
+          "clear": 7,
+          "shadow": 1
+        },
+        {
+          "none": 6,
+          "attack": 14,
+          "cover": 28,
+          "support": 80,
+          "setup": 15,
+          "clear": 10,
+          "pass": 22,
+          "refuel": 3,
+          "shadow": 2
+        }
+      ],
+      "nonFiniteSamples": 0,
+      "maxSpeed": 39.9189931823396,
+      "maxBallSpeed": 39.16883645856679
+    }
+  ],
+  "results": [
+    {
+      "name": "fair / 1211 / finite physical and learning state",
+      "pass": true
+    },
+    {
+      "name": "fair / 1211 / no emergency resets",
+      "pass": true
+    },
+    {
+      "name": "fair / 1211 / all four agents update independently",
+      "pass": true
+    },
+    {
+      "name": "fair / 1211 / all four players make physical contacts",
+      "pass": true
+    },
+    {
+      "name": "rain / 1384 / finite physical and learning state",
+      "pass": true
+    },
+    {
+      "name": "rain / 1384 / no emergency resets",
+      "pass": true
+    },
+    {
+      "name": "rain / 1384 / all four agents update independently",
+      "pass": true
+    },
+    {
+      "name": "rain / 1384 / all four players make physical contacts",
+      "pass": true
+    },
+    {
+      "name": "wind / 1557 / finite physical and learning state",
+      "pass": true
+    },
+    {
+      "name": "wind / 1557 / no emergency resets",
+      "pass": true
+    },
+    {
+      "name": "wind / 1557 / all four agents update independently",
+      "pass": true
+    },
+    {
+      "name": "wind / 1557 / all four players make physical contacts",
+      "pass": true
+    },
+    {
+      "name": "ecology / 1730 / finite physical and learning state",
+      "pass": true
+    },
+    {
+      "name": "ecology / 1730 / no emergency resets",
+      "pass": true
+    },
+    {
+      "name": "ecology / 1730 / all four agents update independently",
+      "pass": true
+    },
+    {
+      "name": "ecology / 1730 / all four players make physical contacts",
+      "pass": true
+    },
+    {
+      "name": "fair / 1903 / finite physical and learning state",
+      "pass": true
+    },
+    {
+      "name": "fair / 1903 / no emergency resets",
+      "pass": true
+    },
+    {
+      "name": "fair / 1903 / all four agents update independently",
+      "pass": true
+    },
+    {
+      "name": "fair / 1903 / all four players make physical contacts",
+      "pass": true
+    },
+    {
+      "name": "rain / 2076 / finite physical and learning state",
+      "pass": true
+    },
+    {
+      "name": "rain / 2076 / no emergency resets",
+      "pass": true
+    },
+    {
+      "name": "rain / 2076 / all four agents update independently",
+      "pass": true
+    },
+    {
+      "name": "rain / 2076 / all four players make physical contacts",
+      "pass": true
+    },
+    {
+      "name": "wind / 2249 / finite physical and learning state",
+      "pass": true
+    },
+    {
+      "name": "wind / 2249 / no emergency resets",
+      "pass": true
+    },
+    {
+      "name": "wind / 2249 / all four agents update independently",
+      "pass": true
+    },
+    {
+      "name": "wind / 2249 / all four players make physical contacts",
+      "pass": true
+    },
+    {
+      "name": "ecology / 2422 / finite physical and learning state",
+      "pass": true
+    },
+    {
+      "name": "ecology / 2422 / no emergency resets",
+      "pass": true
+    },
+    {
+      "name": "ecology / 2422 / all four agents update independently",
+      "pass": true
+    },
+    {
+      "name": "ecology / 2422 / all four players make physical contacts",
+      "pass": true
+    }
+  ],
+  "limitations": [
+    "Stability and observed-play test; not evidence of learned teamwork or increased win rate.",
+    "Physics and policies simulated locally in Node, not a rendering benchmark."
+  ]
+}

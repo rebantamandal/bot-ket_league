@@ -1,0 +1,6 @@
+{
+  "renderer": "Canvas / Atelier",
+  "htmlSha256": "7e075814a84c016feb9f90a09cc14ef1dcd7e6a52e3ce82ae82efe6f8d36d11c",
+  "errors": [],
+  "method": "Actual paused four-car simulation states and real UI. No compositing."
+}
