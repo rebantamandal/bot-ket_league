@@ -1,5 +1,5 @@
 {
-  "htmlSha256": "60414ff13038b0b8c65e89c946a58f5e8f16404edada9fe14d12cfd6b674b847",
+  "htmlSha256": "5be05fb78d4e001aff049a4e4f2ef912ccc8aca3a92f56220b9d361f724c4d87",
   "passed": 71,
   "failed": 0,
   "results": [
@@ -298,7 +298,7 @@
   ],
   "skipped": [],
   "measurements": {
-    "exportBytes": 2843104,
+    "exportBytes": 2843158,
     "webgl": {
       "kind": "WebGL2 / Atelier",
       "gl": true,
@@ -308,7 +308,7 @@
     }
   },
   "errors": [],
-  "seconds": 37.681172370910645,
+  "seconds": 58.58936548233032,
   "limitations": [
     "Document injection: file/HTTP URL navigation is blocked in this test browser. Real-origin autosave reload not verified.",
     "Canvas is tested directly; see skipped for WebGL availability. No native gaming-GPU benchmark."

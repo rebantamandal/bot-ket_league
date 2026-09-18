@@ -71,21 +71,23 @@
               : 0.0018 - 0.0000004 * v;
     return Math.max(0.0008, k) * 50;
   }
-  function car(id, side = 1) {
+  // `side` is which team the car belongs to and never changes; `dir` is the goal it is attacking,
+  // which flips when the teams change ends.
+  function car(id, side = 1, dir = side) {
     return {
       id,
       side,
-      x: side * -24,
+      x: dir * -24,
       y: CLEAR,
       z: id ? 4.6 : -4.6,
       vx: 0,
       vy: 0,
       vz: 0,
-      q: Q.axis([0, 1, 0], side > 0 ? 0 : -Math.PI),
+      q: Q.axis([0, 1, 0], dir > 0 ? 0 : -Math.PI),
       omega: [0, 0, 0],
       ground: true,
       normal: [0, 1, 0],
-      heading: side > 0 ? 0 : Math.PI,
+      heading: dir > 0 ? 0 : Math.PI,
       boost: 65,
       heat: 0,
       boosting: false,
@@ -148,6 +150,13 @@
       this.round = 1;
       this.score = [0, 0];
       this.mode = o.mode || 'duel';
+      // Which goal each team attacks. Teams change ends at every period, as they would in any sport
+      // played outdoors, so a prevailing wind or a worn, muddy goalmouth cannot favour one side all
+      // session. Team identity and colour live in car.side and never change.
+      this.ends = 1;
+      // Time since the last change of ends. Unlike roundTime this survives kickoffs, or a goal every
+      // half minute would keep resetting it and the ends would never actually change.
+      this.periodTime = 0;
       this.learning = true;
       this.human = -1;
       this.manual = {};
@@ -210,15 +219,16 @@
       this.teamClock = 0;
       for (let i = 0; i < count(this.mode); i++) {
         const side = sideFor(i, this.mode),
-          c = car(i, side);
+          dir = side * this.ends,
+          c = car(i, side, dir);
         if (this.mode === 'doubles') {
           const lead = i >> 1 === this.round % 2;
-          c.x = -side * (lead ? 24 : 34);
-          c.z = side * (lead ? -8 : 10);
+          c.x = -dir * (lead ? 24 : 34);
+          c.z = dir * (lead ? -8 : 10);
           c.q = Q.axis([0, 1, 0], -Math.atan2(-c.z, -c.x));
           c.heading = Math.atan2(-c.z, -c.x);
         } else if (this.mode === 'coop') {
-          c.x = -25 + i * 8;
+          c.x = (-25 + i * 8) * this.ends;
           c.z = i ? 7 : -7;
         } else {
           c.z = (i ? 1 : -1) * (this.round % 2 ? 4.6 : 10.0);
@@ -603,8 +613,9 @@
           this.stats.air++;
         }
         if (wall) this.stats.wallTouches++;
-        const ownIncoming = before[0] * c.side < -4 && c.side * b.x < -X * 0.55,
-          save = ownIncoming && b.vx * c.side > 2;
+        const toward = c.side * this.ends,
+          ownIncoming = before[0] * toward < -4 && toward * b.x < -X * 0.55,
+          save = ownIncoming && b.vx * toward > 2;
         if (save) this.stats.saves++;
         const pass =
           old >= 0 &&
@@ -617,7 +628,7 @@
           this.stats.passes++;
           b.assist = { id: old, receiver: c.id, side: c.side, time: this.time };
         } else if (old >= 0 && this.cars[old]?.side !== c.side) b.assist = null;
-        const quality = clamp((c.side * (b.vx - before[0])) / 30, -1, 1);
+        const quality = clamp((toward * (b.vx - before[0])) / 30, -1, 1);
         if (this.mode === 'doubles') {
           const mates = this.cars.filter(a => a.side === c.side);
           for (const a of mates) a.reward += (0.14 + 0.2 * quality) / mates.length;
@@ -718,9 +729,12 @@
         }
       }
     }
-    goal(side) {
+    // `into` is the goal the ball crossed, as a sign of world x. Which team that credits depends on
+    // which ends they are playing; everything below is in team terms.
+    goal(into) {
       if (this.goalPause > 0) return;
-      const team = side > 0 ? 0 : 1;
+      const side = into * this.ends,
+        team = side > 0 ? 0 : 1;
       this.score[team]++;
       this.stats.goals++;
       this.goalPause = 2.5;
@@ -794,6 +808,7 @@
       }
       this.matchTime += dt;
       this.roundTime += dt;
+      this.periodTime += dt;
       if (this.mode === 'doubles') root.TTeam?.update(this);
       for (let i = 0; i < this.cars.length; i++) {
         const c = this.cars[i];
@@ -824,9 +839,11 @@
         this.resetPositions();
       }
       // No invisible ball nudges, scheduled tricks or forced goals. Period boundaries only.
-      if (this.roundTime > 120) {
+      if (this.periodTime > 120) {
         for (let i = 0; i < this.cars.length; i++) this.brains[i]?.terminal(this, this.cars[i]);
-        this.emit('period', -1);
+        this.periodTime = 0;
+        this.ends *= -1;
+        this.emit('period', -1, { ends: this.ends });
         this.resetPositions();
       }
     }
@@ -873,6 +890,7 @@
         surface: this.visualCache,
         time: this.time,
         round: this.round,
+        ends: this.ends,
         score: this.score.slice(),
         ball: {
           x: this.ball.x,

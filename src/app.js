@@ -348,10 +348,21 @@
             $('goalText').textContent =
               m.telemetry.mode === 'coop' ? (e.side > 0 ? 'TEAM GOAL' : 'OWN GOAL') : scoring + ' SCORES';
             $('goalText').style.color = e.side > 0 ? 'var(--blue)' : 'var(--orange)';
+            $('goalSub').textContent = 'RESETTING FOR KICKOFF';
             $('goal').classList.add('show');
             clearTimeout(this.goalTimer);
             this.goalTimer = setTimeout(() => $('goal').classList.remove('show'), 1600);
             this.startDirectorCut();
+          }
+          // The teams change ends every period, so say so: otherwise they appear to line up on the
+          // wrong halves for no reason.
+          if (e.type === 'period') {
+            $('goalText').textContent = 'ENDS CHANGED';
+            $('goalText').style.color = 'var(--ink)';
+            $('goalSub').textContent = 'TEAMS SWAP GOALS';
+            $('goal').classList.add('show');
+            clearTimeout(this.goalTimer);
+            this.goalTimer = setTimeout(() => $('goal').classList.remove('show'), 1900);
           }
         }
         for (const n of m.notices) this.discovery(n);

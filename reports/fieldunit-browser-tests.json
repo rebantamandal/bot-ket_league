@@ -1,6 +1,6 @@
 {
-  "date": "2026-09-18T07:09:38Z",
-  "htmlSha256": "60414ff13038b0b8c65e89c946a58f5e8f16404edada9fe14d12cfd6b674b847",
+  "date": "2026-09-18T13:13:35Z",
+  "htmlSha256": "5be05fb78d4e001aff049a4e4f2ef912ccc8aca3a92f56220b9d361f724c4d87",
   "passed": 49,
   "failed": 0,
   "results": [
@@ -210,7 +210,7 @@
     }
   ],
   "errors": [],
-  "seconds": 12.947818517684937,
+  "seconds": 22.564523935317993,
   "limitations": [
     "Chromium document injection; real-origin IndexedDB reload unverified.",
     "Worker fault is deliberately injected to exercise recovery."

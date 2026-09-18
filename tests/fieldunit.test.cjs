@@ -261,6 +261,9 @@ test('Actual 08 full-world fixture preserves physical state and learned weights'
   const expected = cp(old.universe.dynamics);
   expected.teamState = {};
   expected.teamClock = 0;
+  // A world saved before the teams changed ends was, by definition, playing the first ends.
+  expected.ends = 1;
+  expected.periodTime = 0;
   expected.stats = { assists: 0, teamBumps: 0, ...expected.stats };
   for (const c of expected.cars)
     if (c.plan) c.plan.features = c.plan.features.concat(Array(TBrain.NF - c.plan.features.length).fill(0));

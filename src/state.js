@@ -18,6 +18,7 @@
     'goalPause',
     'kickoffTime',
     'roundTime',
+    'periodTime',
     'stats',
     'props',
     'cars',
@@ -26,7 +27,8 @@
     'lastBump',
     'events',
     'teamState',
-    'teamClock'
+    'teamClock',
+    'ends'
   ];
   const plain = x => JSON.parse(JSON.stringify(x, (_, v) => (ArrayBuffer.isView(v) ? Array.from(v) : v)));
   function safe(data) {
@@ -246,8 +248,10 @@
       if (!Number.isFinite(pad.charge) || pad.charge < 0 || pad.charge > 1) throw Error('Invalid boost resource.');
     const finite = (v, lo, hi) => Number.isFinite(v) && v >= lo && v <= hi;
     if (
+      (p.ends !== undefined && p.ends !== 1 && p.ends !== -1) ||
       !finite(p.bounce, 0.35, 0.9) ||
       !finite(p.roundTime, 0, 121) ||
+      (p.periodTime !== undefined && !finite(p.periodTime, 0, 121)) ||
       !finite(p.matchTime, 0, 1e12) ||
       !finite(p.goalPause, -0.1, 3) ||
       !finite(p.kickoffTime, -0.1, 2) ||
@@ -369,6 +373,8 @@
     if (p.teamClock !== undefined && !finite(p.teamClock, 0, p.time + 0.2)) throw Error('Invalid team planning clock.');
     const w = new TP.World({ seed: 19, mode: p.mode });
     for (const k of KEYS) if (p[k] !== undefined) w[k] = plain(p[k]);
+    if (p.ends === undefined) w.ends = 1;
+    if (p.periodTime === undefined) w.periodTime = 0;
     w.stats = { assists: 0, teamBumps: 0, ...w.stats };
     w.rng = new TM.RNG(d.rng);
     w.weather.load(d.weather);

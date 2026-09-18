@@ -2339,7 +2339,7 @@ body[data-match='doubles'] .corner-status {
 
 </header>
 <div id="stage" data-camera="arena"><div class="scoreboard" role="group" aria-label="Mica 0. Ember 0."><div class="team"><span class="teamname" id="team0">MICA</span><span class="score" id="score0">0</span></div><div class="timebox"><span id="clock">0:00</span><div id="modeLabel">DUEL</div></div><div class="team"><span class="score" id="score1">0</span><span class="teamname" id="team1">EMBER</span></div></div><canvas id="arena" tabindex="0" aria-label="Live three-dimensional car-soccer simulation. Select a car to inspect its decisions."></canvas><div class="stage-label"><i class="dot"></i><span id="stageState">LIVE ARENA</span></div><div class="format-switch" id="formatSwitch" role="group" aria-label="Match format"><button data-match="duel" aria-pressed="true" title="Two opposing agents">1v1</button><button data-match="doubles" aria-pressed="false" title="Two teams of two agents">2v2</button></div><button id="weatherBadge" class="weather-badge" title="Open the living world"><span id="weatherSymbol" aria-hidden="true">&#9728;</span><span id="worldClock">Day 01 / 14:48</span><i></i><span id="worldWeather">Fair</span><span class="weather-arrow" aria-hidden="true">&#8599;</span></button><div class="stage-mode" id="viewName" aria-hidden="true">OVERVIEW</div><button id="resetCamera" hidden title="Reset arena camera">Reset view &#8599;</button></div>
-<div class="goal" id="goal" aria-live="polite"><strong id="goalText">MICA SCORES</strong><p>RESETTING FOR KICKOFF</p></div>
+<div class="goal" id="goal" aria-live="polite"><strong id="goalText">MICA SCORES</strong><p id="goalSub">RESETTING FOR KICKOFF</p></div>
 <div class="ribbon" id="ribbon" hidden><span id="ribbonText"></span><button id="ribbonExit">Return live</button><div id="replayProgress"></div></div>
 <div class="notice" id="notice" aria-live="polite"><button id="noticeButton" aria-label="Open this observation in Fieldnotes"><div class="notice-type" id="noticeType"></div><div class="notice-text" id="noticeText"></div></button></div>
 <div id="bottomline" aria-hidden="true"></div>
@@ -2985,21 +2985,23 @@ body[data-match='doubles'] .corner-status {
               : 0.0018 - 0.0000004 * v;
     return Math.max(0.0008, k) * 50;
   }
-  function car(id, side = 1) {
+  // `side` is which team the car belongs to and never changes; `dir` is the goal it is attacking,
+  // which flips when the teams change ends.
+  function car(id, side = 1, dir = side) {
     return {
       id,
       side,
-      x: side * -24,
+      x: dir * -24,
       y: CLEAR,
       z: id ? 4.6 : -4.6,
       vx: 0,
       vy: 0,
       vz: 0,
-      q: Q.axis([0, 1, 0], side > 0 ? 0 : -Math.PI),
+      q: Q.axis([0, 1, 0], dir > 0 ? 0 : -Math.PI),
       omega: [0, 0, 0],
       ground: true,
       normal: [0, 1, 0],
-      heading: side > 0 ? 0 : Math.PI,
+      heading: dir > 0 ? 0 : Math.PI,
       boost: 65,
       heat: 0,
       boosting: false,
@@ -3062,6 +3064,13 @@ body[data-match='doubles'] .corner-status {
       this.round = 1;
       this.score = [0, 0];
       this.mode = o.mode || 'duel';
+      // Which goal each team attacks. Teams change ends at every period, as they would in any sport
+      // played outdoors, so a prevailing wind or a worn, muddy goalmouth cannot favour one side all
+      // session. Team identity and colour live in car.side and never change.
+      this.ends = 1;
+      // Time since the last change of ends. Unlike roundTime this survives kickoffs, or a goal every
+      // half minute would keep resetting it and the ends would never actually change.
+      this.periodTime = 0;
       this.learning = true;
       this.human = -1;
       this.manual = {};
@@ -3124,15 +3133,16 @@ body[data-match='doubles'] .corner-status {
       this.teamClock = 0;
       for (let i = 0; i < count(this.mode); i++) {
         const side = sideFor(i, this.mode),
-          c = car(i, side);
+          dir = side * this.ends,
+          c = car(i, side, dir);
         if (this.mode === 'doubles') {
           const lead = i >> 1 === this.round % 2;
-          c.x = -side * (lead ? 24 : 34);
-          c.z = side * (lead ? -8 : 10);
+          c.x = -dir * (lead ? 24 : 34);
+          c.z = dir * (lead ? -8 : 10);
           c.q = Q.axis([0, 1, 0], -Math.atan2(-c.z, -c.x));
           c.heading = Math.atan2(-c.z, -c.x);
         } else if (this.mode === 'coop') {
-          c.x = -25 + i * 8;
+          c.x = (-25 + i * 8) * this.ends;
           c.z = i ? 7 : -7;
         } else {
           c.z = (i ? 1 : -1) * (this.round % 2 ? 4.6 : 10.0);
@@ -3517,8 +3527,9 @@ body[data-match='doubles'] .corner-status {
           this.stats.air++;
         }
         if (wall) this.stats.wallTouches++;
-        const ownIncoming = before[0] * c.side < -4 && c.side * b.x < -X * 0.55,
-          save = ownIncoming && b.vx * c.side > 2;
+        const toward = c.side * this.ends,
+          ownIncoming = before[0] * toward < -4 && toward * b.x < -X * 0.55,
+          save = ownIncoming && b.vx * toward > 2;
         if (save) this.stats.saves++;
         const pass =
           old >= 0 &&
@@ -3531,7 +3542,7 @@ body[data-match='doubles'] .corner-status {
           this.stats.passes++;
           b.assist = { id: old, receiver: c.id, side: c.side, time: this.time };
         } else if (old >= 0 && this.cars[old]?.side !== c.side) b.assist = null;
-        const quality = clamp((c.side * (b.vx - before[0])) / 30, -1, 1);
+        const quality = clamp((toward * (b.vx - before[0])) / 30, -1, 1);
         if (this.mode === 'doubles') {
           const mates = this.cars.filter(a => a.side === c.side);
           for (const a of mates) a.reward += (0.14 + 0.2 * quality) / mates.length;
@@ -3632,9 +3643,12 @@ body[data-match='doubles'] .corner-status {
         }
       }
     }
-    goal(side) {
+    // `into` is the goal the ball crossed, as a sign of world x. Which team that credits depends on
+    // which ends they are playing; everything below is in team terms.
+    goal(into) {
       if (this.goalPause > 0) return;
-      const team = side > 0 ? 0 : 1;
+      const side = into * this.ends,
+        team = side > 0 ? 0 : 1;
       this.score[team]++;
       this.stats.goals++;
       this.goalPause = 2.5;
@@ -3708,6 +3722,7 @@ body[data-match='doubles'] .corner-status {
       }
       this.matchTime += dt;
       this.roundTime += dt;
+      this.periodTime += dt;
       if (this.mode === 'doubles') root.TTeam?.update(this);
       for (let i = 0; i < this.cars.length; i++) {
         const c = this.cars[i];
@@ -3738,9 +3753,11 @@ body[data-match='doubles'] .corner-status {
         this.resetPositions();
       }
       // No invisible ball nudges, scheduled tricks or forced goals. Period boundaries only.
-      if (this.roundTime > 120) {
+      if (this.periodTime > 120) {
         for (let i = 0; i < this.cars.length; i++) this.brains[i]?.terminal(this, this.cars[i]);
-        this.emit('period', -1);
+        this.periodTime = 0;
+        this.ends *= -1;
+        this.emit('period', -1, { ends: this.ends });
         this.resetPositions();
       }
     }
@@ -3787,6 +3804,7 @@ body[data-match='doubles'] .corner-status {
         surface: this.visualCache,
         time: this.time,
         round: this.round,
+        ends: this.ends,
         score: this.score.slice(),
         ball: {
           x: this.ball.x,
@@ -3891,6 +3909,9 @@ body[data-match='doubles'] .corner-status {
       w.cars.find(a => a.id !== c.id) ||
       c,
     mate = (w, c) => w.cars.find(a => a.id !== c.id && a.side === c.side),
+    // Which goal this car attacks. Team identity is c.side and never changes; the direction flips
+    // when the teams change ends, so every geometric use of a side goes through here.
+    dir = (w, c) => c.side * (w.ends || 1),
     dot = (a, b) => a.reduce((s, v, i) => s + v * b[i], 0),
     distance = (a, b) => Math.hypot(a.x - b.x, a.z - b.z);
   class Brain {
@@ -3940,10 +3961,10 @@ body[data-match='doubles'] .corner-status {
     potential(w, c) {
       const b = w.ball;
       return w.mode === 'doubles'
-        ? 0.036 * c.side * b.x -
+        ? 0.036 * dir(w, c) * b.x -
             0.012 * Math.min(...w.cars.filter(a => a.side === c.side).map(a => distance(a, b))) +
             0.002 * c.boost
-        : 0.036 * c.side * b.x - 0.012 * distance(c, b) + 0.002 * c.boost;
+        : 0.036 * dir(w, c) * b.x - 0.012 * distance(c, b) + 0.002 * c.boost;
     }
     value(p) {
       return p.prior + this.correction(p);
@@ -3968,7 +3989,7 @@ body[data-match='doubles'] .corner-status {
     threat(w, c, pred) {
       const b = w.ball,
         o = enemy(w, c),
-        s = c.side;
+        s = dir(w, c);
       let deadline = 9,
         crossZ = 0;
       for (const q of pred)
@@ -3979,7 +4000,7 @@ body[data-match='doubles'] .corner-status {
         }
       const incoming = clamp((-s * b.vx) / 18, 0, 1),
         depth = clamp((-s * b.x + 8) / 48, 0, 1),
-        behind = o.side * (b.x - o.x) > -2;
+        behind = o.side * (w.ends || 1) * (b.x - o.x) > -2;
       const press = w.mode === 'coop' ? 0 : clamp(1 - distance(o, b) / 18, 0, 1) * (behind ? 1 : 0.3) * depth;
       return {
         urgency:
@@ -4088,7 +4109,7 @@ body[data-match='doubles'] .corner-status {
         o = enemy(w, c),
         d = distance(c, b),
         od = distance(o, b),
-        s = c.side,
+        s = dir(w, c),
         angle = wrap(Math.atan2(p.z - c.z, p.x - c.x) - c.heading),
         threat = clamp((-b.vx * s) / 25, 0, 1) * clamp((-b.x * s + 5) / X, 0, 1),
         e = p.environment,
@@ -4168,7 +4189,7 @@ body[data-match='doubles'] .corner-status {
         contact * ctx.doubleRisk,
         support * clamp(distance(c, m) / 24, 0, 1),
         pass ? 1 - (p.blocked || 0) : 0,
-        pass ? clamp((c.side * ((p.shotX || 0) - w.ball.x)) / 24, -1, 1) : 0,
+        pass ? clamp((dir(w, c) * ((p.shotX || 0) - w.ball.x)) / 24, -1, 1) : 0,
         pass ? clamp(p.receiveMargin || 0, -1, 1) : 0,
         support * ctx.urgency,
         contact * (ctx.lastMan ? 1 : 0),
@@ -4189,12 +4210,17 @@ body[data-match='doubles'] .corner-status {
         urgency: team.urgency || 0,
         mateETA: this.travel(m, w.ball.x, w.ball.z),
         doubleRisk: clamp((16 - distance(m, w.ball)) / 14, 0, 1),
-        lastMan: c.side * c.x < c.side * m.x,
+        lastMan: dir(w, c) * c.x < dir(w, c) * m.x,
         role: primary ? 'challenge' : team.urgency > 0.3 ? 'cover' : 'support'
       };
     }
     // Aggression from temperament and the scoreboard: a team two goals down commits more, a team
     // two up holds shape. It keeps long sessions from settling into one pattern.
+    // Widening this response to a heavier scoreline was tried twice and neither direction survived
+    // measurement. Chasing harder from further behind made blowouts clearly worse (3:1-or-worse 2v2
+    // sessions went 2/30 -> 7/30): a desperate side concedes faster than it scores. Easing the
+    // leader off further was flat over 60 sessions a side (mean goal gap -0.19 +/- 0.80). The band
+    // stays where it is.
     drive(w, c) {
       const team = c.side > 0 ? 0 : 1,
         margin = clamp(w.score[team] - w.score[1 - team], -3, 3),
@@ -4211,7 +4237,7 @@ body[data-match='doubles'] .corner-status {
       const b = w.ball,
         o = enemy(w, c),
         d = distance(c, b),
-        s = c.side,
+        s = dir(w, c),
         pred = w.predictBall(3.0, 0.12),
         plans = [],
         th = this.threat(w, c, pred),
@@ -4494,7 +4520,7 @@ body[data-match='doubles'] .corner-status {
             ln = this.lane(w, c, q, tx, tz),
             receiverETA = this.travel(m, tx, tz),
             flight = len / 27,
-            opposition = Math.min(...w.cars.filter(a => a.side !== s).map(a => this.travel(a, tx, tz))),
+            opposition = Math.min(...w.cars.filter(a => a.side !== c.side).map(a => this.travel(a, tx, tz))),
             receiveMargin = clamp(opposition - receiverETA, -1, 1),
             alignment = ((q.x - c.x) * ln.nx + (q.z - c.z) * ln.nz) / (distance(c, q) || 1),
             shot = this.lane(w, c, q, s * (X + 1), 0);
@@ -4734,7 +4760,7 @@ body[data-match='doubles'] .corner-status {
         p = c.plan;
       if (!p) return;
       const sp = flat(c),
-        s = c.side,
+        s = dir(w, c),
         other = enemy(w, c);
       let tx = p.x,
         tz = p.z,
@@ -4890,7 +4916,7 @@ body[data-match='doubles'] .corner-status {
             oz = obstacle.z - c.z,
             front = ox * route[0] + oz * route[2],
             lat = -ox * route[2] + oz * route[0],
-            radius = obstacle.id !== undefined ? (obstacle.side === s ? 4.3 : 3.2) : obstacle.r + 1.4;
+            radius = obstacle.id !== undefined ? (obstacle.side === c.side ? 4.3 : 3.2) : obstacle.r + 1.4;
           if (front > 0 && front < 9 && Math.abs(lat) < radius) {
             const away = lat >= 0 ? -1 : 1,
               offset = (1 - front / 9) * (1 - Math.abs(lat) / radius) * 5.0 * away;
@@ -5172,7 +5198,7 @@ body[data-match='doubles'] .corner-status {
             id: c.id,
             eta:
               brain.travel(c, q.x, q.z) +
-              (side * (w.ball.x - c.x) < -2 ? 0.24 : 0) -
+              (side * (w.ends || 1) * (w.ball.x - c.x) < -2 ? 0.24 : 0) -
               (w.ball.last === c.id && distance(c, w.ball) < 7 ? 0.16 : 0)
           }))
           .sort((a, b) => a.eta - b.eta || a.id - b.id);
@@ -5273,8 +5299,8 @@ body[data-match='doubles'] .corner-status {
         let phase = 'direct';
         if (!c.ground && c.y > 1.4) phase = 'air';
         else if (Math.abs(c.normal[1]) < 0.8 && c.y > 2) phase = 'wall';
-        else if (c.side * (b.x - c.x) < -2) phase = 'recover';
-        else if (c.side * c.x < -23 && db > 8) phase = 'cover';
+        else if (c.side * (w.ends || 1) * (b.x - c.x) < -2) phase = 'recover';
+        else if (c.side * (w.ends || 1) * c.x < -23 && db > 8) phase = 'cover';
         else if (c.drift && Math.abs(c.slip) > 2) phase = 'slide';
         else if (c.throttle < -0.2 && c.speed > 6) phase = 'brake';
         else if (Math.abs(c.steer) > 0.65) phase = 'turn';
@@ -5288,14 +5314,14 @@ body[data-match='doubles'] .corner-status {
           y: c.y,
           turn: Math.abs(c.steer),
           brake: c.throttle < -0.2 ? 1 : 0,
-          goalSide: clamp((c.side * (b.x - c.x)) / 20, -1, 1),
+          goalSide: clamp((c.side * (w.ends || 1) * (b.x - c.x)) / 20, -1, 1),
           wide: clamp((b.z - c.z) / 28, -1, 1),
           db: clamp(db / 40, 0, 1),
           phase,
           wet: mat.wet,
           heat: c.heat,
           air: !c.ground ? 1 : 0,
-          threat: c.side * b.vx < -3 && c.side * b.x < 0 ? 1 : 0,
+          threat: c.side * (w.ends || 1) * b.vx < -3 && c.side * (w.ends || 1) * b.x < 0 ? 1 : 0,
           features: c.plan ? Array.from(c.plan.features) : null,
           reference: br?.referenceFeatures ? Array.from(br.referenceFeatures) : null,
           probe: br?.policyProbe || 0,
@@ -5320,7 +5346,7 @@ body[data-match='doubles'] .corner-status {
         const side = w.cars[t.agent].side,
           team = side > 0 ? 0 : 1,
           gd = w.score[team] - t.score[team] - (w.score[1 - team] - t.score[1 - team]);
-        const progress = w.round === t.round ? clamp((side * (w.ball.x - t.bx)) / 24, -1, 1) : 0;
+        const progress = w.round === t.round ? clamp((side * (w.ends || 1) * (w.ball.x - t.bx)) / 24, -1, 1) : 0;
         const utility = gd ? clamp(gd, -1, 1) : clamp(t.quality * 0.48 + progress * 0.52, -1, 1);
         this.register(w, t, utility, gd);
       }
@@ -5644,6 +5670,7 @@ body[data-match='doubles'] .corner-status {
     'goalPause',
     'kickoffTime',
     'roundTime',
+    'periodTime',
     'stats',
     'props',
     'cars',
@@ -5652,7 +5679,8 @@ body[data-match='doubles'] .corner-status {
     'lastBump',
     'events',
     'teamState',
-    'teamClock'
+    'teamClock',
+    'ends'
   ];
   const plain = x => JSON.parse(JSON.stringify(x, (_, v) => (ArrayBuffer.isView(v) ? Array.from(v) : v)));
   function safe(data) {
@@ -5872,8 +5900,10 @@ body[data-match='doubles'] .corner-status {
       if (!Number.isFinite(pad.charge) || pad.charge < 0 || pad.charge > 1) throw Error('Invalid boost resource.');
     const finite = (v, lo, hi) => Number.isFinite(v) && v >= lo && v <= hi;
     if (
+      (p.ends !== undefined && p.ends !== 1 && p.ends !== -1) ||
       !finite(p.bounce, 0.35, 0.9) ||
       !finite(p.roundTime, 0, 121) ||
+      (p.periodTime !== undefined && !finite(p.periodTime, 0, 121)) ||
       !finite(p.matchTime, 0, 1e12) ||
       !finite(p.goalPause, -0.1, 3) ||
       !finite(p.kickoffTime, -0.1, 2) ||
@@ -5995,6 +6025,8 @@ body[data-match='doubles'] .corner-status {
     if (p.teamClock !== undefined && !finite(p.teamClock, 0, p.time + 0.2)) throw Error('Invalid team planning clock.');
     const w = new TP.World({ seed: 19, mode: p.mode });
     for (const k of KEYS) if (p[k] !== undefined) w[k] = plain(p[k]);
+    if (p.ends === undefined) w.ends = 1;
+    if (p.periodTime === undefined) w.periodTime = 0;
     w.stats = { assists: 0, teamBumps: 0, ...w.stats };
     w.rng = new TM.RNG(d.rng);
     w.weather.load(d.weather);
@@ -10719,10 +10751,21 @@ precision highp float;void main(){}`;
             $('goalText').textContent =
               m.telemetry.mode === 'coop' ? (e.side > 0 ? 'TEAM GOAL' : 'OWN GOAL') : scoring + ' SCORES';
             $('goalText').style.color = e.side > 0 ? 'var(--blue)' : 'var(--orange)';
+            $('goalSub').textContent = 'RESETTING FOR KICKOFF';
             $('goal').classList.add('show');
             clearTimeout(this.goalTimer);
             this.goalTimer = setTimeout(() => $('goal').classList.remove('show'), 1600);
             this.startDirectorCut();
+          }
+          // The teams change ends every period, so say so: otherwise they appear to line up on the
+          // wrong halves for no reason.
+          if (e.type === 'period') {
+            $('goalText').textContent = 'ENDS CHANGED';
+            $('goalText').style.color = 'var(--ink)';
+            $('goalSub').textContent = 'TEAMS SWAP GOALS';
+            $('goal').classList.add('show');
+            clearTimeout(this.goalTimer);
+            this.goalTimer = setTimeout(() => $('goal').classList.remove('show'), 1900);
           }
         }
         for (const n of m.notices) this.discovery(n);

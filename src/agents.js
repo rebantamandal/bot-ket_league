@@ -40,6 +40,9 @@
       w.cars.find(a => a.id !== c.id) ||
       c,
     mate = (w, c) => w.cars.find(a => a.id !== c.id && a.side === c.side),
+    // Which goal this car attacks. Team identity is c.side and never changes; the direction flips
+    // when the teams change ends, so every geometric use of a side goes through here.
+    dir = (w, c) => c.side * (w.ends || 1),
     dot = (a, b) => a.reduce((s, v, i) => s + v * b[i], 0),
     distance = (a, b) => Math.hypot(a.x - b.x, a.z - b.z);
   class Brain {
@@ -89,10 +92,10 @@
     potential(w, c) {
       const b = w.ball;
       return w.mode === 'doubles'
-        ? 0.036 * c.side * b.x -
+        ? 0.036 * dir(w, c) * b.x -
             0.012 * Math.min(...w.cars.filter(a => a.side === c.side).map(a => distance(a, b))) +
             0.002 * c.boost
-        : 0.036 * c.side * b.x - 0.012 * distance(c, b) + 0.002 * c.boost;
+        : 0.036 * dir(w, c) * b.x - 0.012 * distance(c, b) + 0.002 * c.boost;
     }
     value(p) {
       return p.prior + this.correction(p);
@@ -117,7 +120,7 @@
     threat(w, c, pred) {
       const b = w.ball,
         o = enemy(w, c),
-        s = c.side;
+        s = dir(w, c);
       let deadline = 9,
         crossZ = 0;
       for (const q of pred)
@@ -128,7 +131,7 @@
         }
       const incoming = clamp((-s * b.vx) / 18, 0, 1),
         depth = clamp((-s * b.x + 8) / 48, 0, 1),
-        behind = o.side * (b.x - o.x) > -2;
+        behind = o.side * (w.ends || 1) * (b.x - o.x) > -2;
       const press = w.mode === 'coop' ? 0 : clamp(1 - distance(o, b) / 18, 0, 1) * (behind ? 1 : 0.3) * depth;
       return {
         urgency:
@@ -237,7 +240,7 @@
         o = enemy(w, c),
         d = distance(c, b),
         od = distance(o, b),
-        s = c.side,
+        s = dir(w, c),
         angle = wrap(Math.atan2(p.z - c.z, p.x - c.x) - c.heading),
         threat = clamp((-b.vx * s) / 25, 0, 1) * clamp((-b.x * s + 5) / X, 0, 1),
         e = p.environment,
@@ -317,7 +320,7 @@
         contact * ctx.doubleRisk,
         support * clamp(distance(c, m) / 24, 0, 1),
         pass ? 1 - (p.blocked || 0) : 0,
-        pass ? clamp((c.side * ((p.shotX || 0) - w.ball.x)) / 24, -1, 1) : 0,
+        pass ? clamp((dir(w, c) * ((p.shotX || 0) - w.ball.x)) / 24, -1, 1) : 0,
         pass ? clamp(p.receiveMargin || 0, -1, 1) : 0,
         support * ctx.urgency,
         contact * (ctx.lastMan ? 1 : 0),
@@ -338,12 +341,17 @@
         urgency: team.urgency || 0,
         mateETA: this.travel(m, w.ball.x, w.ball.z),
         doubleRisk: clamp((16 - distance(m, w.ball)) / 14, 0, 1),
-        lastMan: c.side * c.x < c.side * m.x,
+        lastMan: dir(w, c) * c.x < dir(w, c) * m.x,
         role: primary ? 'challenge' : team.urgency > 0.3 ? 'cover' : 'support'
       };
     }
     // Aggression from temperament and the scoreboard: a team two goals down commits more, a team
     // two up holds shape. It keeps long sessions from settling into one pattern.
+    // Widening this response to a heavier scoreline was tried twice and neither direction survived
+    // measurement. Chasing harder from further behind made blowouts clearly worse (3:1-or-worse 2v2
+    // sessions went 2/30 -> 7/30): a desperate side concedes faster than it scores. Easing the
+    // leader off further was flat over 60 sessions a side (mean goal gap -0.19 +/- 0.80). The band
+    // stays where it is.
     drive(w, c) {
       const team = c.side > 0 ? 0 : 1,
         margin = clamp(w.score[team] - w.score[1 - team], -3, 3),
@@ -360,7 +368,7 @@
       const b = w.ball,
         o = enemy(w, c),
         d = distance(c, b),
-        s = c.side,
+        s = dir(w, c),
         pred = w.predictBall(3.0, 0.12),
         plans = [],
         th = this.threat(w, c, pred),
@@ -643,7 +651,7 @@
             ln = this.lane(w, c, q, tx, tz),
             receiverETA = this.travel(m, tx, tz),
             flight = len / 27,
-            opposition = Math.min(...w.cars.filter(a => a.side !== s).map(a => this.travel(a, tx, tz))),
+            opposition = Math.min(...w.cars.filter(a => a.side !== c.side).map(a => this.travel(a, tx, tz))),
             receiveMargin = clamp(opposition - receiverETA, -1, 1),
             alignment = ((q.x - c.x) * ln.nx + (q.z - c.z) * ln.nz) / (distance(c, q) || 1),
             shot = this.lane(w, c, q, s * (X + 1), 0);
@@ -883,7 +891,7 @@
         p = c.plan;
       if (!p) return;
       const sp = flat(c),
-        s = c.side,
+        s = dir(w, c),
         other = enemy(w, c);
       let tx = p.x,
         tz = p.z,
@@ -1039,7 +1047,7 @@
             oz = obstacle.z - c.z,
             front = ox * route[0] + oz * route[2],
             lat = -ox * route[2] + oz * route[0],
-            radius = obstacle.id !== undefined ? (obstacle.side === s ? 4.3 : 3.2) : obstacle.r + 1.4;
+            radius = obstacle.id !== undefined ? (obstacle.side === c.side ? 4.3 : 3.2) : obstacle.r + 1.4;
           if (front > 0 && front < 9 && Math.abs(lat) < radius) {
             const away = lat >= 0 ? -1 : 1,
               offset = (1 - front / 9) * (1 - Math.abs(lat) / radius) * 5.0 * away;
@@ -1321,7 +1329,7 @@
             id: c.id,
             eta:
               brain.travel(c, q.x, q.z) +
-              (side * (w.ball.x - c.x) < -2 ? 0.24 : 0) -
+              (side * (w.ends || 1) * (w.ball.x - c.x) < -2 ? 0.24 : 0) -
               (w.ball.last === c.id && distance(c, w.ball) < 7 ? 0.16 : 0)
           }))
           .sort((a, b) => a.eta - b.eta || a.id - b.id);

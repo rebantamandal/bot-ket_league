@@ -76,8 +76,8 @@
         let phase = 'direct';
         if (!c.ground && c.y > 1.4) phase = 'air';
         else if (Math.abs(c.normal[1]) < 0.8 && c.y > 2) phase = 'wall';
-        else if (c.side * (b.x - c.x) < -2) phase = 'recover';
-        else if (c.side * c.x < -23 && db > 8) phase = 'cover';
+        else if (c.side * (w.ends || 1) * (b.x - c.x) < -2) phase = 'recover';
+        else if (c.side * (w.ends || 1) * c.x < -23 && db > 8) phase = 'cover';
         else if (c.drift && Math.abs(c.slip) > 2) phase = 'slide';
         else if (c.throttle < -0.2 && c.speed > 6) phase = 'brake';
         else if (Math.abs(c.steer) > 0.65) phase = 'turn';
@@ -91,14 +91,14 @@
           y: c.y,
           turn: Math.abs(c.steer),
           brake: c.throttle < -0.2 ? 1 : 0,
-          goalSide: clamp((c.side * (b.x - c.x)) / 20, -1, 1),
+          goalSide: clamp((c.side * (w.ends || 1) * (b.x - c.x)) / 20, -1, 1),
           wide: clamp((b.z - c.z) / 28, -1, 1),
           db: clamp(db / 40, 0, 1),
           phase,
           wet: mat.wet,
           heat: c.heat,
           air: !c.ground ? 1 : 0,
-          threat: c.side * b.vx < -3 && c.side * b.x < 0 ? 1 : 0,
+          threat: c.side * (w.ends || 1) * b.vx < -3 && c.side * (w.ends || 1) * b.x < 0 ? 1 : 0,
           features: c.plan ? Array.from(c.plan.features) : null,
           reference: br?.referenceFeatures ? Array.from(br.referenceFeatures) : null,
           probe: br?.policyProbe || 0,
@@ -123,7 +123,7 @@
         const side = w.cars[t.agent].side,
           team = side > 0 ? 0 : 1,
           gd = w.score[team] - t.score[team] - (w.score[1 - team] - t.score[1 - team]);
-        const progress = w.round === t.round ? clamp((side * (w.ball.x - t.bx)) / 24, -1, 1) : 0;
+        const progress = w.round === t.round ? clamp((side * (w.ends || 1) * (w.ball.x - t.bx)) / 24, -1, 1) : 0;
         const utility = gd ? clamp(gd, -1, 1) : clamp(t.quality * 0.48 + progress * 0.52, -1, 1);
         this.register(w, t, utility, gd);
       }

@@ -1,6 +1,6 @@
 {
-  "sourceSha256": "60414ff13038b0b8c65e89c946a58f5e8f16404edada9fe14d12cfd6b674b847",
-  "date": "2026-09-18T07:14:39Z",
+  "sourceSha256": "5be05fb78d4e001aff049a4e4f2ef912ccc8aca3a92f56220b9d361f724c4d87",
+  "date": "2026-09-18T18:08:08Z",
   "passed": 66,
   "failed": 0,
   "results": [
@@ -28,16 +28,16 @@
       "name": "Live simulation keeps near real-time pace",
       "pass": true,
       "detail": {
-        "fps": 59.99999999999999,
-        "renderMs": 2.077075782229347,
-        "workerTickMs": 0.09387270956771286,
-        "actualPace": 1.0025166625146535,
+        "fps": 60.00300015000748,
+        "renderMs": 2.3816665301558464,
+        "workerTickMs": 0.18405609388615604,
+        "actualPace": 1.00110466721905,
         "backing": [
           1720,
           830
         ],
         "longTasks": [
-          74
+          72
         ]
       }
     },
@@ -73,19 +73,21 @@
       "name": "Live night rain maintains simulation pace",
       "pass": true,
       "detail": {
-        "fps": 60.00300015000745,
-        "renderMs": 2.197818961137817,
-        "workerTickMs": 0.05535664152068092,
-        "actualPace": 0.997755051139449,
+        "fps": 54.96267118581965,
+        "renderMs": 4.7847354246241025,
+        "workerTickMs": 0.47152743882524656,
+        "actualPace": 1.0007730108732233,
         "backing": [
           1720,
           830
         ],
         "longTasks": [
-          74,
-          131,
+          72,
+          141,
           129,
-          129
+          107,
+          473,
+          57
         ]
       }
     },
@@ -258,14 +260,14 @@
       "pass": true,
       "detail": {
         "updatesBefore": [
-          237,
-          213
+          298,
+          272
         ],
         "updatesAfter": [
-          237,
-          238
+          298,
+          296
         ],
-        "goalPauseAtStart": 0.12500000000000636,
+        "goalPauseAtStart": 0,
         "kickoffAtStart": -0.008333333333332282
       }
     },
@@ -314,53 +316,61 @@
   "errors": [],
   "measurements": {
     "desktopDaylight": {
-      "fps": 59.99999999999999,
-      "renderMs": 2.077075782229347,
-      "workerTickMs": 0.09387270956771286,
-      "actualPace": 1.0025166625146535,
+      "fps": 60.00300015000748,
+      "renderMs": 2.3816665301558464,
+      "workerTickMs": 0.18405609388615604,
+      "actualPace": 1.00110466721905,
       "backing": [
         1720,
         830
       ],
       "longTasks": [
-        74
+        72
       ]
     },
     "desktopRainNight": {
-      "fps": 60.00300015000745,
-      "renderMs": 2.197818961137817,
-      "workerTickMs": 0.05535664152068092,
-      "actualPace": 0.997755051139449,
+      "fps": 54.96267118581965,
+      "renderMs": 4.7847354246241025,
+      "workerTickMs": 0.47152743882524656,
+      "actualPace": 1.0007730108732233,
       "backing": [
         1720,
         830
       ],
       "longTasks": [
-        74,
-        131,
+        72,
+        141,
         129,
-        129
+        107,
+        473,
+        57
       ]
     },
     "desktopFollowRain": {
-      "fps": 60.00300015000745,
-      "renderMs": 5.829735304294324,
-      "workerTickMs": 0.05635161305627797,
-      "actualPace": 0.9959332724727686,
+      "fps": 27.069093862082976,
+      "renderMs": 18.63446369041101,
+      "workerTickMs": 1.4983717126885818,
+      "actualPace": 1.0026378122268076,
       "backing": [
-        1720,
-        830
+        1548,
+        747
       ],
       "longTasks": [
-        74,
-        131,
-        129,
-        129
+        107,
+        473,
+        57,
+        136,
+        52,
+        56,
+        77,
+        195,
+        60,
+        52
       ]
     },
     "historicalEvaluation": {
       "kind": "paired-evaluation",
-      "date": "2026-09-18T07:13:44.450Z",
+      "date": "2026-09-18T18:05:42.818Z",
       "archiveId": 1,
       "secondsPerGame": 35,
       "gameCount": 16,
@@ -369,13 +379,13 @@
         {
           "agent": 0,
           "trials": 4,
-          "goalDifferenceChange": -3,
-          "mean": -0.75,
+          "goalDifferenceChange": -2,
+          "mean": -0.5,
           "interval": [
-            -3.1365,
-            1.6364999999999998
+            -2.553972167938667,
+            1.5539721679386669
           ],
-          "touchDifference": -9,
+          "touchDifference": 16,
           "allTied": false
         },
         {
@@ -387,7 +397,7 @@
             -2.250013777735594,
             2.250013777735594
           ],
-          "touchDifference": -17,
+          "touchDifference": -34,
           "allTied": false
         }
       ],
@@ -404,12 +414,12 @@
             "forwardImpulse": 4.120101738282375
           },
           "current": {
-            "scoreFor": 1,
-            "scoreAgainst": 1,
-            "touches": 4,
-            "forwardImpulse": 1.9327278623475057
+            "scoreFor": 2,
+            "scoreAgainst": 0,
+            "touches": 9,
+            "forwardImpulse": 3.7856843904013995
           },
-          "delta": -2
+          "delta": 0
         },
         {
           "agent": 0,
@@ -423,10 +433,10 @@
             "forwardImpulse": 3.7730990498346344
           },
           "current": {
-            "scoreFor": 1,
-            "scoreAgainst": 1,
-            "touches": 7,
-            "forwardImpulse": 4.536268251164247
+            "scoreFor": 0,
+            "scoreAgainst": 0,
+            "touches": 12,
+            "forwardImpulse": 1.864941778847973
           },
           "delta": 1
         },
@@ -442,12 +452,12 @@
             "forwardImpulse": 1.510032771329388
           },
           "current": {
-            "scoreFor": 1,
+            "scoreFor": 0,
             "scoreAgainst": 0,
-            "touches": 5,
-            "forwardImpulse": 2.3576566718592664
+            "touches": 18,
+            "forwardImpulse": 0.4419058846680902
           },
-          "delta": 0
+          "delta": -1
         },
         {
           "agent": 0,
@@ -463,8 +473,8 @@
           "current": {
             "scoreFor": 0,
             "scoreAgainst": 1,
-            "touches": 4,
-            "forwardImpulse": 1.8551913202412722
+            "touches": 6,
+            "forwardImpulse": 1.4494762288175527
           },
           "delta": -2
         },
@@ -482,8 +492,8 @@
           "current": {
             "scoreFor": 1,
             "scoreAgainst": 0,
-            "touches": 7,
-            "forwardImpulse": 2.9853832325353586
+            "touches": 10,
+            "forwardImpulse": 2.496594150795361
           },
           "delta": 2
         },
@@ -499,12 +509,12 @@
             "forwardImpulse": 1.8380758812025109
           },
           "current": {
-            "scoreFor": 1,
+            "scoreFor": 0,
             "scoreAgainst": 1,
-            "touches": 13,
-            "forwardImpulse": 2.8877934287437883
+            "touches": 17,
+            "forwardImpulse": 2.4237202463023504
           },
-          "delta": 0
+          "delta": -1
         },
         {
           "agent": 1,
@@ -518,10 +528,10 @@
             "forwardImpulse": 0.8368745155737747
           },
           "current": {
-            "scoreFor": 0,
-            "scoreAgainst": 0,
-            "touches": 29,
-            "forwardImpulse": 2.0576857230779795
+            "scoreFor": 1,
+            "scoreAgainst": 1,
+            "touches": 6,
+            "forwardImpulse": 2.0506876780705228
           },
           "delta": -1
         },
@@ -537,41 +547,41 @@
             "forwardImpulse": 1.1947462752800924
           },
           "current": {
-            "scoreFor": 0,
+            "scoreFor": 1,
             "scoreAgainst": 0,
-            "touches": 3,
-            "forwardImpulse": 1.453096650711572
+            "touches": 2,
+            "forwardImpulse": 1.0647940110703655
           },
-          "delta": -1
+          "delta": 0
         }
       ],
       "limitation": "Four paired starts per agent, two weather conditions, one archived opponent policy. Descriptive small-sample evidence, not proof of general improvement."
     },
-    "worldSaveBytes": 2318232,
+    "worldSaveBytes": 2759760,
     "lowPower": {
-      "fps": 30.001500075003786,
-      "renderMs": 4.274625848527292,
-      "workerTickMs": 0.05721221798478375,
-      "actualPace": 1.0021009564851677,
+      "fps": 30.001500075003836,
+      "renderMs": 6.292578767701435,
+      "workerTickMs": 0.6572332061242557,
+      "actualPace": 1.0010217325327326,
       "backing": [
         944,
         664
       ],
       "longTasks": [
+        97,
+        106,
+        88,
+        92,
+        572,
+        585,
+        643,
         169,
-        160,
-        156,
-        168,
-        171,
-        171,
-        168,
-        171,
-        50,
-        51
+        70,
+        91
       ]
     }
   },
-  "durationSeconds": 94.7,
+  "durationSeconds": 223.7,
   "limitations": [
     "Headless Chromium on the test host, not a gaming-GPU or user-laptop benchmark.",
     "Document injection used: enterprise policy blocks file and HTTP URL navigation. Real-origin IndexedDB save/reload is not verified.",
