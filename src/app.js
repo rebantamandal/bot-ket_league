@@ -61,19 +61,25 @@
       noise.loop = true;
       const rain = c.createGain(),
         tire = c.createGain(),
+        wind = c.createGain(),
         rf = c.createBiquadFilter(),
-        tf = c.createBiquadFilter();
+        tf = c.createBiquadFilter(),
+        wf = c.createBiquadFilter();
       rf.type = 'lowpass';
       rf.frequency.value = 1600;
       tf.type = 'bandpass';
       tf.frequency.value = 740;
       tf.Q.value = 0.7;
+      wf.type = 'lowpass';
+      wf.frequency.value = 340;
       rain.gain.value = 0;
       tire.gain.value = 0;
+      wind.gain.value = 0;
       noise.connect(rf).connect(rain).connect(this.master);
       noise.connect(tf).connect(tire).connect(this.master);
+      noise.connect(wf).connect(wind).connect(this.master);
       noise.start();
-      this.surfaceAudio = { rain, tire };
+      this.surfaceAudio = { rain, tire, wind };
     }
     update(s, paused) {
       this.updateEngines(s, paused);
@@ -91,6 +97,9 @@
             );
       this.surfaceAudio.rain.gain.setTargetAtTime(rain, t, 0.4);
       this.surfaceAudio.tire.gain.setTargetAtTime(slip, t, 0.1);
+      // Wind is audible as the air speed climbs, so a gale sounds like one.
+      const gust = paused ? 0 : Math.min(0.2, ((s.weather?.airSpeed || 0) / 14) * 0.2);
+      this.surfaceAudio.wind.gain.setTargetAtTime(gust, t, 0.7);
     }
     updateEngines(s, paused) {
       if (!this.ctx || performance.now() - this.last < 70) return;
@@ -163,6 +172,11 @@
       this.replay = null;
       this.tool = null;
       this.manual = {};
+      this.director = true; // automatic slow-motion cut on goals
+      this.directorCut = null;
+      this.directorPausedUntil = 0;
+      this.padInput = {};
+      this.padSig = '';
       this.saved = null;
       this.stateTick = 0;
       this.lastJournal = '';
@@ -337,6 +351,7 @@
             $('goal').classList.add('show');
             clearTimeout(this.goalTimer);
             this.goalTimer = setTimeout(() => $('goal').classList.remove('show'), 1600);
+            this.startDirectorCut();
           }
         }
         for (const n of m.notices) this.discovery(n);
@@ -425,6 +440,10 @@
           this.frameLimit = p.frameLimit;
           $('frameLimit').value = p.frameLimit;
         }
+        if (typeof p.director === 'boolean') {
+          this.director = p.director;
+          $('director').setAttribute('aria-checked', p.director);
+        }
         for (const k of ['labels', 'effects'])
           if (typeof p[k] === 'boolean') {
             this.renderer[k === 'effects' ? 'fx' : k] = p[k];
@@ -444,6 +463,7 @@
             paletteMode: this.paletteMode,
             quality: this.renderer.quality,
             frameLimit: this.frameLimit,
+            director: this.director,
             labels: this.renderer.labels,
             effects: this.renderer.fx
           })
@@ -535,6 +555,8 @@
       const dt = clamp((now - this.lastFrame) / 1000, 0, 0.1);
       this.lastFrame = now;
       if (document.hidden || !this.b) return;
+      this.pollGamepad();
+      if (this.directorCut && now > this.directorCut.until) this.endDirectorCut();
       const limit = this.paused && !this.replay ? Math.min(15, this.frameLimit) : this.frameLimit;
       const interval = 1000 / limit;
       if (this.drawLimit !== limit || !this.nextPaint) {
@@ -623,11 +645,11 @@
       $('stageState').textContent = this.replay ? 'RECORDED SEQUENCE' : this.paused ? 'PAUSED' : 'LIVE ARENA';
       $('liveDot').classList.toggle('paused', this.paused || !t.learning);
       $('panelStatus').textContent = this.replay
-        ? 'REPLAY / LEARNING PAUSED'
+        ? 'REPLAY / LEARNING OFF'
         : this.paused
           ? 'SIMULATION PAUSED'
           : t.learning
-            ? 'UPDATING FROM LIVE EXPERIENCE'
+            ? 'LEARNING ON'
             : 'POLICIES FROZEN';
       if (this.drawer) {
         this.updateAgent();
@@ -658,12 +680,18 @@
       const surface = s.surface || this.telemetry.surface;
       $('worldConditions').textContent =
         Math.round((surface?.wetMean || 0) * 100) +
-        '% surface moisture / ' +
+        '% moisture / ' +
+        Math.round((surface?.wearMean || 0) * 100) +
+        '% turf wear / ' +
         w.temperature.toFixed(1) +
         ' C / wind ' +
         w.airSpeed.toFixed(1) +
         ' m/s';
       if (document.activeElement !== $('weatherMode')) $('weatherMode').value = w.mode;
+      if (document.activeElement !== $('hourScrub')) {
+        $('hourScrub').value = String(Math.round(w.clock * 48) / 2);
+        $('hourOut').textContent = time;
+      }
       if (document.activeElement !== $('dayLength')) $('dayLength').value = String(w.dayLength);
     }
     // ---- Fieldnotes: selected agent ----
@@ -701,6 +729,17 @@
       $('steerBar').style.marginLeft = ((a.controls.steer || 0) < 0 ? 50 - 50 * Math.abs(a.controls.steer) : 50) + '%';
       $('throttleBar').style.width = Math.abs(a.controls.throttle || 0) * 100 + '%';
       $('followAgent').textContent = 'Follow ' + names[this.agent] + ' \u2192';
+      const temper = a.temper;
+      $('temperament').textContent = temper
+        ? 'TEMPERAMENT / AGGRESSION ' +
+          temper.aggression.toFixed(2) +
+          ' / PATIENCE ' +
+          temper.patience.toFixed(2) +
+          ' / BOOST ' +
+          temper.boostHunger.toFixed(2) +
+          ' / FLAIR ' +
+          temper.flair.toFixed(2)
+        : '';
       const history = this.detail?.agents[this.agent]?.history || [];
       if (history.length > 1) {
         const max = Math.max(0.01, ...history.map(h => h.norm));
@@ -791,8 +830,8 @@
       $('laneClearance').style.width = (lane === null ? clamp(p?.threat || 0, 0, 1) : lane) * 100 + '%';
       $('tacticalNote').textContent =
         lane === null
-          ? 'Goal pressure ' + Math.round((p?.threat || 0) * 100) + '/100 in the current model. Not a goal probability.'
-          : 'Lane clearance ' + Math.round(lane * 100) + '/100 in the geometric model. Not a shot probability.';
+          ? 'Goal pressure ' + Math.round((p?.threat || 0) * 100) + '/100.'
+          : 'Lane clearance ' + Math.round(lane * 100) + '/100.';
       if (a.exploring) $('thinking').textContent = 'Exploring among comparable plans';
       else if (this.telemetry.learning && !this.paused && !a.frozen && this.telemetry.human !== this.agent)
         $('thinking').textContent = 'Planning + learning live';
@@ -911,7 +950,7 @@
         const e = document.createElement('div');
         e.className = 'empty';
         e.innerHTML =
-          '<div class="empty-icon">&#9675;</div><h3>Watching the<br>approach, not the score.</h3><p>Sequence candidates appear after actual attempts. Misses are recorded alongside useful outcomes.</p><p class="footnote">Nothing is scheduled to become a discovery.</p>';
+          '<div class="empty-icon">&#9675;</div><h3>No sequences yet.</h3><p>Repeated approaches appear here after attempts, including misses.</p>';
         list.append(e);
         return;
       }
@@ -967,19 +1006,16 @@
           range.append(i);
           card.append(explain, range);
         }
-        const caution = document.createElement('p');
-        caution.className = 'footnote';
-        caution.textContent =
-          (p.result ? 'Latest: ' + p.result + '. ' : '') + (p.caveat || 'One sequence is not proof of a strategy.');
-        card.append(caution);
+        if (p.result) {
+          const latest = document.createElement('p');
+          latest.className = 'footnote';
+          latest.textContent = 'Latest: ' + p.result + '.';
+          card.append(latest);
+        }
         if (p.stage > 0) {
           const shifted = document.createElement('p');
           shifted.className = 'footnote';
-          shifted.textContent =
-            'Relative learned-preference shift ' +
-            (p.shift >= 0 ? '+' : '') +
-            p.shift.toFixed(3) +
-            '. Association, not proof of invention.';
+          shifted.textContent = 'Learned-preference shift ' + (p.shift >= 0 ? '+' : '') + p.shift.toFixed(3) + '.';
           card.append(shifted);
         }
         const watch = document.createElement('button');
@@ -1121,9 +1157,7 @@
       }
       const note = document.createElement('p');
       note.className = 'footnote';
-      note.textContent =
-        r.secondsPerGame +
-        ' s per game / frozen policies / dry + wet / swapped sides. Small sample; not proof of improvement.';
+      note.textContent = r.secondsPerGame + ' s per game / frozen policies / dry + wet / swapped sides.';
       root.append(note);
     }
     renderBranch(r) {
@@ -1153,8 +1187,7 @@
       }
       const note = document.createElement('p');
       note.className = 'footnote';
-      note.textContent =
-        '18 simulated seconds from the same saved state. Both policies frozen. One comparison is not a general causal result.';
+      note.textContent = '18 simulated seconds from the same saved state, both policies frozen.';
       root.append(note);
     }
     async playStudy(frames, variant) {
@@ -1225,7 +1258,6 @@
       for (const b of document.querySelectorAll('[data-match]'))
         b.setAttribute('aria-pressed', String(b.dataset.match === mode));
       $('mode').value = mode;
-      $('worldTagline').textContent = n === 4 ? 'Two teams. One changing world.' : 'Two agents. One changing world.';
       $('team0').title = n === 4 ? 'Mica + Slate' : 'Mica';
       $('team1').title = n === 4 ? 'Ember + Sienna' : 'Ember';
       $('sparLabel').textContent = n === 4 ? 'Orange team policies' : 'Ember policy';
@@ -1294,6 +1326,28 @@
       }
       this.updateAgent();
       this.updatePortrait();
+    }
+    // A goal cuts to the ball camera, then hands the view back. The cut never changes simulation
+    // speed. Choosing a camera by hand stands the director down; it never interrupts driving or a replay.
+    startDirectorCut() {
+      const now = performance.now();
+      if (
+        !this.director ||
+        this.directorCut ||
+        this.replay ||
+        this.tool ||
+        (this.telemetry?.human ?? -1) >= 0 ||
+        now < this.directorPausedUntil
+      )
+        return;
+      this.directorCut = { until: now + 3400, view: this.renderer.mode };
+      this.view('ball');
+    }
+    endDirectorCut() {
+      const cut = this.directorCut;
+      if (!cut) return;
+      this.directorCut = null;
+      if (!this.replay && (this.telemetry?.human ?? -1) < 0) this.view(cut.view);
     }
     view(mode) {
       if (
@@ -1365,7 +1419,8 @@
         this.openInspector(false);
         $('ribbon').hidden = false;
         $('ribbonText').textContent =
-          { wet: 'WATER', heat: 'HEAT', sphere: 'HEAVY BALL', impulse: 'IMPULSE' }[tool] + ' / CLICK THE FIELD';
+          { wet: 'WATER', heat: 'HEAT', sphere: 'HEAVY BALL', impulse: 'IMPULSE', gust: 'WIND GUST' }[tool] +
+          ' / CLICK THE FIELD';
         $('ribbonExit').textContent = 'Cancel';
         $('arena').style.cursor = 'crosshair';
       } else {
@@ -1404,7 +1459,7 @@
         const url = URL.createObjectURL(new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' })),
           a = document.createElement('a');
         a.href = url;
-        a.download = 'bot-ket-league-' + data.mode + '-' + new Date().toISOString().slice(0, 10) + '.json';
+        a.download = 'bo-ket-league-' + data.mode + '-' + new Date().toISOString().slice(0, 10) + '.json';
         a.click();
         setTimeout(() => URL.revokeObjectURL(url), 2000);
         this.toast('Full world saved to file.');
@@ -1444,7 +1499,11 @@
         this.updatePortrait();
       };
       for (const b of document.querySelectorAll('#cameraChapters [data-view]'))
-        b.onclick = () => this.view(b.dataset.view);
+        b.onclick = () => {
+          this.directorPausedUntil = performance.now() + 20000;
+          this.endDirectorCut();
+          this.view(b.dataset.view);
+        };
       const click = (id, fn) => $(id).addEventListener('click', fn);
       click('theme', () =>
         this.setTheme(this.paletteMode === 'auto' ? 'night' : this.paletteMode === 'night' ? 'day' : 'auto')
@@ -1505,6 +1564,12 @@
         this.frameLimit = +e.target.value;
         this.savePreferences();
       };
+      click('director', () => {
+        this.director = !this.director;
+        $('director').setAttribute('aria-checked', this.director);
+        if (!this.director) this.endDirectorCut();
+        this.savePreferences();
+      });
       for (const [id, key] of [
         ['labels', 'labels'],
         ['effects', 'fx'],
@@ -1600,6 +1665,8 @@
       });
       addEventListener('blur', () => {
         this.manual = {};
+        this.padInput = {};
+        this.padSig = '';
         this.send({ type: 'keys', value: {} });
       });
       addEventListener('pagehide', () => {
@@ -1629,6 +1696,13 @@
       for (const b of document.querySelectorAll('[data-hour]'))
         b.onclick = () => ask('weather', { value: { hour: +b.dataset.hour } });
       $('lifeMode').onchange = e => ask('lifeMode', { value: e.target.value });
+      $('stormNow').onclick = () => ask('weather', { value: { mode: 'rain', windScale: 1.6 } });
+      $('hourScrub').oninput = e => {
+        const hour = +e.target.value;
+        $('hourOut').textContent =
+          String(Math.floor(hour)).padStart(2, '0') + ':' + String(Math.round((hour % 1) * 60)).padStart(2, '0');
+        ask('weather', { value: { hour } });
+      };
       $('bounce').oninput = e => ask('world', { bounce: +e.target.value });
       $('archiveNow').onclick = async () => {
         const a = await ask('archive');
@@ -1656,7 +1730,7 @@
           url = URL.createObjectURL(new Blob([text], { type: 'application/json' })),
           a = document.createElement('a');
         a.href = url;
-        a.download = 'bot-ket-league-last-available-backup.json';
+        a.download = 'bo-ket-league-last-available-backup.json';
         a.click();
         setTimeout(() => URL.revokeObjectURL(url), 5000);
       };
@@ -1851,7 +1925,7 @@
       if (this.telemetry?.human >= 0 && map[key]) {
         e.preventDefault();
         this.manual[map[key]] = down;
-        this.send({ type: 'keys', value: { ...this.manual } });
+        this.send({ type: 'keys', value: { ...this.manual, ...this.padInput } });
         return;
       }
       if (!down || e.repeat) return;
@@ -1864,6 +1938,46 @@
       if (key === 'i') this.openInspector(!this.drawer);
       if (key === 'h') this.focusView();
       if (key === 'f') this.fullscreen();
+      if (key === '[' || key === ']') this.stepSpeed(key === ']' ? 1 : -1);
+    }
+    stepSpeed(direction) {
+      const speeds = [0.5, 1, 2, 4],
+        current = speeds.indexOf(+$('speed').value),
+        next = speeds[clamp((current < 0 ? 1 : current) + direction, 0, speeds.length - 1)];
+      $('speed').value = String(next);
+      this.send({ type: 'speed', value: next });
+      this.toast('Simulation speed ' + next + 'x.');
+    }
+    // A standard-mapping gamepad drives Mica: left stick steers (and pitches in the air), right and left
+    // triggers throttle and reverse, A jumps, B boosts, X powerslides, bumpers air-roll. Start takes or
+    // hands back control. Only non-neutral inputs are sent, so the keyboard keeps working alongside it.
+    pollGamepad() {
+      const pad = [...(navigator.getGamepads?.() || [])].find(p => p?.connected && p.mapping === 'standard');
+      if (!pad) return;
+      const pressed = i => !!pad.buttons[i]?.pressed,
+        value = i => pad.buttons[i]?.value || 0,
+        deadzone = v => (Math.abs(v) < 0.15 ? 0 : (Math.sign(v) * (Math.abs(v) - 0.15)) / 0.85),
+        step = v => Math.round(v * 50) / 50;
+      const start = pressed(9);
+      if (start && !this.padStart && this.telemetry) this.human(this.telemetry.human < 0);
+      this.padStart = start;
+      if (!(this.telemetry?.human >= 0)) return;
+      const input = {},
+        axes = {
+          throttle: step(value(7) - value(6)),
+          steer: step(deadzone(pad.axes[0] || 0)),
+          pitch: step(deadzone(pad.axes[1] || 0)),
+          roll: (pressed(5) ? 1 : 0) - (pressed(4) ? 1 : 0)
+        };
+      for (const [k, v] of Object.entries(axes)) if (v) input[k] = v;
+      if (pressed(0)) input.jump = true;
+      if (pressed(1)) input.boost = true;
+      if (pressed(2)) input.drift = true;
+      const sig = JSON.stringify(input);
+      if (sig === this.padSig) return;
+      this.padSig = sig;
+      this.padInput = input;
+      this.send({ type: 'keys', value: { ...this.manual, ...input } });
     }
     async fullscreen() {
       try {

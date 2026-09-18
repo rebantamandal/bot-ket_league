@@ -1,4 +1,4 @@
-/* Coupled moisture, heat and optional life. Two explicitly different cell models:
+/* Coupled moisture, heat, turf wear and optional life. Two explicitly different cell models:
    Conway B3/S23 (unmodified) or an ecological, weather/tire-sensitive automaton. */
 (function (root) {
   'use strict';
@@ -10,6 +10,8 @@
       this.N = 2560;
       this.wet = new Float32Array(this.N);
       this.heat = new Float32Array(this.N);
+      // Turf wear: tyres and boost scuff it, rain turns worn cells to mud, grass slowly regrows.
+      this.wear = new Float32Array(this.N);
       this.life = new Uint8Array(this.N);
       this.w2 = new Float32Array(this.N);
       this.h2 = new Float32Array(this.N);
@@ -36,11 +38,15 @@
     sample(x, z) {
       const i = this.index(x, z),
         w = this.wet[i],
-        growth = this.living && this.lifeMode === 'ecology' && this.life[i] ? 1 : 0;
+        growth = this.living && this.lifeMode === 'ecology' && this.life[i] ? 1 : 0,
+        wear = this.wear[i],
+        mud = wear * clamp(w * 1.8, 0, 1);
       return {
         wet: w,
         heat: this.heat[i],
-        grip: (1 - 0.55 * w) * (1 - 0.06 * growth),
+        wear,
+        mud,
+        grip: (1 - 0.55 * w) * (1 - 0.06 * growth) * (1 - 0.05 * wear - 0.3 * mud),
         exposure: this.exposure[i],
         growth
       };
@@ -62,6 +68,15 @@
           layer[k] = clamp(layer[k] + (1 - d2) * amount, 0, 1);
         }
       this.revision++;
+    }
+    // Tyres wear the cell under a moving car. Soft, wet ground wears faster; the change is small per
+    // step, so only repeated traffic cuts a visible path.
+    scuff(x, z, amount) {
+      const i = this.index(x, z),
+        next = clamp(this.wear[i] + amount * (1 + 1.5 * this.wet[i]), 0, 1);
+      if (next === this.wear[i]) return;
+      this.wear[i] = next;
+      this.revision++; // the visual snapshot is cached against this
     }
     disturb(x, z) {
       if (!this.living || this.lifeMode !== 'ecology') return;
@@ -132,6 +147,12 @@
             0,
             1
           );
+          // Regrowth: faster in sun and moisture, stalled by heat.
+          if (this.wear[i] > 0)
+            this.wear[i] = Math.max(
+              0,
+              this.wear[i] - t * 0.0011 * (0.4 + solar * ex + 0.6 * Math.min(1, w * 2)) * (1 - 0.8 * h)
+            );
           this.h2[i] = clamp(
             h +
               t *
@@ -151,26 +172,32 @@
     visual() {
       const wet = [],
         heat = [],
-        life = [];
+        life = [],
+        wear = [];
       let wetMean = 0,
-        heatMean = 0;
+        heatMean = 0,
+        wearMean = 0;
       for (let z = 0; z < 40; z += 4)
         for (let x = 0; x < 64; x += 4) {
           let w = 0,
             h = 0,
-            n = 0;
+            n = 0,
+            r = 0;
           for (let j = 0; j < 4; j++)
             for (let i = 0; i < 4; i++) {
               const k = (z + j) * 64 + x + i;
               w += this.wet[k];
               h += this.heat[k];
               n += this.life[k];
+              r += this.wear[k];
             }
           wet.push(Math.round((w / 16) * 100));
           heat.push(Math.round((h / 16) * 100));
           life.push(this.living ? Math.round((n / 16) * 100) : 0);
+          wear.push(Math.round((r / 16) * 100));
           wetMean += w;
           heatMean += h;
+          wearMean += r;
         }
       return {
         nx: 16,
@@ -178,9 +205,11 @@
         wet,
         heat,
         life,
+        wear,
         revision: this.revision,
         wetMean: wetMean / 2560,
-        heatMean: heatMean / 2560
+        heatMean: heatMean / 2560,
+        wearMean: wearMean / 2560
       };
     }
     save() {
@@ -188,6 +217,7 @@
         wet: Array.from(this.wet),
         heat: Array.from(this.heat),
         life: Array.from(this.life),
+        wear: Array.from(this.wear),
         rain: this.rain,
         living: this.living,
         lifeMode: this.lifeMode,
@@ -204,6 +234,15 @@
           throw Error('Invalid saved surface ' + k);
         this[k].set(d[k]);
       }
+      // Saves from before turf wear start with fresh grass.
+      if (d.wear === undefined) this.wear.fill(0);
+      else if (
+        !Array.isArray(d.wear) ||
+        d.wear.length !== this.N ||
+        d.wear.some(v => !Number.isFinite(v) || v < 0 || v > 1)
+      )
+        throw Error('Invalid saved surface wear');
+      else this.wear.set(d.wear);
       if (!['conway', 'ecology'].includes(d.lifeMode || 'conway')) throw Error('Invalid cellular model.');
       for (const k of ['rain', 'timer', 'lifeTimer', 'generation', 'revision'])
         if (d[k] !== undefined && !Number.isFinite(d[k])) throw Error('Invalid surface clock.');

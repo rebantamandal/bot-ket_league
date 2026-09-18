@@ -1,6 +1,6 @@
 {
-  "sourceSha256": "1abfd8ec2cf48e44fcbe81b4886201c7bc8df9bf67bb66517acf0a4a8cca47c2",
-  "date": "2026-09-17T16:02:55Z",
+  "sourceSha256": "5ed6633ffd0cf31961bcd5a5763581fe8175111833b476e26a669df840b0599f",
+  "date": "2026-09-18T05:58:15Z",
   "passed": 66,
   "failed": 0,
   "results": [
@@ -28,16 +28,16 @@
       "name": "Live simulation keeps near real-time pace",
       "pass": true,
       "detail": {
-        "fps": 60.00300015000748,
-        "renderMs": 2.199910282390944,
-        "workerTickMs": 0.08934190106648578,
-        "actualPace": 0.9999166736105045,
+        "fps": 59.99999999999999,
+        "renderMs": 2.125085631057557,
+        "workerTickMs": 0.10376742313558943,
+        "actualPace": 0.999417006743634,
         "backing": [
           1720,
           830
         ],
         "longTasks": [
-          69
+          75
         ]
       }
     },
@@ -73,20 +73,19 @@
       "name": "Live night rain maintains simulation pace",
       "pass": true,
       "detail": {
-        "fps": 56.69469904563927,
-        "renderMs": 3.022065778331661,
-        "workerTickMs": 0.11183802817950471,
-        "actualPace": 0.9991180199554782,
+        "fps": 60.00300015000757,
+        "renderMs": 2.212579579131263,
+        "workerTickMs": 0.07595957740351975,
+        "actualPace": 0.9954375777693529,
         "backing": [
           1720,
           830
         ],
         "longTasks": [
-          69,
-          93,
-          92,
-          89,
-          102
+          75,
+          119,
+          117,
+          113
         ]
       }
     },
@@ -167,7 +166,7 @@
       "pass": true
     },
     {
-      "name": "Comparison result reports limited evidence, not guaranteed improvement",
+      "name": "Comparison result states the sample it was measured over",
       "pass": true
     },
     {
@@ -259,12 +258,12 @@
       "pass": true,
       "detail": {
         "updatesBefore": [
-          255,
-          216
+          236,
+          221
         ],
         "updatesAfter": [
-          255,
-          239
+          236,
+          246
         ],
         "goalPauseAtStart": 0,
         "kickoffAtStart": -0.008333333333332282
@@ -315,56 +314,53 @@
   "errors": [],
   "measurements": {
     "desktopDaylight": {
-      "fps": 60.00300015000748,
-      "renderMs": 2.199910282390944,
-      "workerTickMs": 0.08934190106648578,
-      "actualPace": 0.9999166736105045,
+      "fps": 59.99999999999999,
+      "renderMs": 2.125085631057557,
+      "workerTickMs": 0.10376742313558943,
+      "actualPace": 0.999417006743634,
       "backing": [
         1720,
         830
       ],
       "longTasks": [
-        69
+        75
       ]
     },
     "desktopRainNight": {
-      "fps": 56.69469904563927,
-      "renderMs": 3.022065778331661,
-      "workerTickMs": 0.11183802817950471,
-      "actualPace": 0.9991180199554782,
+      "fps": 60.00300015000757,
+      "renderMs": 2.212579579131263,
+      "workerTickMs": 0.07595957740351975,
+      "actualPace": 0.9954375777693529,
       "backing": [
         1720,
         830
       ],
       "longTasks": [
-        69,
-        93,
-        92,
-        89,
-        102
+        75,
+        119,
+        117,
+        113
       ]
     },
     "desktopFollowRain": {
-      "fps": 60.00300015000745,
-      "renderMs": 7.4503112489978065,
-      "workerTickMs": 0.1271557319409123,
-      "actualPace": 1.0000275869686737,
+      "fps": 60.00600060006002,
+      "renderMs": 5.91580660480676,
+      "workerTickMs": 0.02271968962168735,
+      "actualPace": 0.9987515605501082,
       "backing": [
         1720,
         830
       ],
       "longTasks": [
-        69,
-        93,
-        92,
-        89,
-        102,
-        50
+        75,
+        119,
+        117,
+        113
       ]
     },
     "historicalEvaluation": {
       "kind": "paired-evaluation",
-      "date": "2026-09-17T16:02:12.165Z",
+      "date": "2026-09-18T05:57:21.681Z",
       "archiveId": 1,
       "secondsPerGame": 35,
       "gameCount": 16,
@@ -373,25 +369,25 @@
         {
           "agent": 0,
           "trials": 4,
-          "goalDifferenceChange": -2,
-          "mean": -0.5,
+          "goalDifferenceChange": 3,
+          "mean": 0.75,
           "interval": [
-            -2.553972167938667,
-            1.5539721679386669
+            -0.773266528440334,
+            2.2732665284403337
           ],
-          "touchDifference": 12,
+          "touchDifference": 0,
           "allTied": false
         },
         {
           "agent": 1,
           "trials": 4,
-          "goalDifferenceChange": 0,
-          "mean": 0,
+          "goalDifferenceChange": 1,
+          "mean": 0.25,
           "interval": [
-            -2.904755296635731,
-            2.904755296635731
+            -1.273266528440334,
+            1.773266528440334
           ],
-          "touchDifference": -15,
+          "touchDifference": 2,
           "allTied": false
         }
       ],
@@ -402,18 +398,18 @@
           "side": 0,
           "seed": 771,
           "baseline": {
-            "scoreFor": 1,
+            "scoreFor": 0,
             "scoreAgainst": 0,
-            "touches": 6,
-            "forwardImpulse": 3.976591347744444
+            "touches": 10,
+            "forwardImpulse": 1.9786473430681935
           },
           "current": {
-            "scoreFor": 1,
-            "scoreAgainst": 1,
-            "touches": 12,
-            "forwardImpulse": 3.3101721014858
+            "scoreFor": 2,
+            "scoreAgainst": 0,
+            "touches": 7,
+            "forwardImpulse": 3.161485790729541
           },
-          "delta": -1
+          "delta": 2
         },
         {
           "agent": 0,
@@ -423,16 +419,16 @@
           "baseline": {
             "scoreFor": 0,
             "scoreAgainst": 1,
-            "touches": 4,
-            "forwardImpulse": 2.098834833042827
+            "touches": 10,
+            "forwardImpulse": 1.4095390211180143
           },
           "current": {
             "scoreFor": 0,
-            "scoreAgainst": 1,
-            "touches": 5,
-            "forwardImpulse": 2.753192460766163
+            "scoreAgainst": 0,
+            "touches": 11,
+            "forwardImpulse": 1.9124794748399687
           },
-          "delta": 0
+          "delta": 1
         },
         {
           "agent": 0,
@@ -440,18 +436,18 @@
           "side": 0,
           "seed": 818,
           "baseline": {
-            "scoreFor": 1,
-            "scoreAgainst": 0,
-            "touches": 5,
-            "forwardImpulse": 2.239124094276125
+            "scoreFor": 0,
+            "scoreAgainst": 1,
+            "touches": 6,
+            "forwardImpulse": 2.2831598062152856
           },
           "current": {
             "scoreFor": 0,
             "scoreAgainst": 1,
-            "touches": 9,
-            "forwardImpulse": 2.9910092533905255
+            "touches": 10,
+            "forwardImpulse": 0.7993278868269909
           },
-          "delta": -2
+          "delta": 0
         },
         {
           "agent": 0,
@@ -459,18 +455,18 @@
           "side": 1,
           "seed": 821,
           "baseline": {
-            "scoreFor": 1,
-            "scoreAgainst": 2,
+            "scoreFor": 0,
+            "scoreAgainst": 0,
             "touches": 4,
-            "forwardImpulse": 3.4760268438917947
+            "forwardImpulse": 1.1210108830572432
           },
           "current": {
-            "scoreFor": 1,
-            "scoreAgainst": 1,
-            "touches": 5,
-            "forwardImpulse": 3.6534708491582464
+            "scoreFor": 0,
+            "scoreAgainst": 0,
+            "touches": 2,
+            "forwardImpulse": 1.029152604277814
           },
-          "delta": 1
+          "delta": 0
         },
         {
           "agent": 1,
@@ -480,16 +476,16 @@
           "baseline": {
             "scoreFor": 0,
             "scoreAgainst": 0,
-            "touches": 8,
-            "forwardImpulse": 3.3796276956723768
+            "touches": 19,
+            "forwardImpulse": 2.9678487533741214
           },
           "current": {
-            "scoreFor": 0,
-            "scoreAgainst": 2,
-            "touches": 4,
-            "forwardImpulse": 4
+            "scoreFor": 1,
+            "scoreAgainst": 0,
+            "touches": 7,
+            "forwardImpulse": 4.167991536492519
           },
-          "delta": -2
+          "delta": 1
         },
         {
           "agent": 1,
@@ -497,18 +493,18 @@
           "side": 1,
           "seed": 787,
           "baseline": {
-            "scoreFor": 0,
+            "scoreFor": 1,
             "scoreAgainst": 0,
-            "touches": 8,
-            "forwardImpulse": 3.322972908459439
+            "touches": 7,
+            "forwardImpulse": 3.95004109950455
           },
           "current": {
-            "scoreFor": 0,
-            "scoreAgainst": 1,
-            "touches": 3,
-            "forwardImpulse": 2.1850387616645945
+            "scoreFor": 1,
+            "scoreAgainst": 0,
+            "touches": 10,
+            "forwardImpulse": 3.840908380372565
           },
-          "delta": -1
+          "delta": 0
         },
         {
           "agent": 1,
@@ -518,14 +514,14 @@
           "baseline": {
             "scoreFor": 0,
             "scoreAgainst": 0,
-            "touches": 15,
-            "forwardImpulse": 1.4851705388127832
+            "touches": 3,
+            "forwardImpulse": 1.1657567670496243
           },
           "current": {
             "scoreFor": 1,
             "scoreAgainst": 0,
-            "touches": 3,
-            "forwardImpulse": 2.003901370115891
+            "touches": 16,
+            "forwardImpulse": 3.2758459365473254
           },
           "delta": 1
         },
@@ -536,46 +532,46 @@
           "seed": 834,
           "baseline": {
             "scoreFor": 0,
-            "scoreAgainst": 1,
-            "touches": 4,
-            "forwardImpulse": 1.88825183917344
+            "scoreAgainst": 0,
+            "touches": 6,
+            "forwardImpulse": 2.1354837717601622
           },
           "current": {
-            "scoreFor": 1,
-            "scoreAgainst": 0,
-            "touches": 10,
-            "forwardImpulse": 2.806936886594145
+            "scoreFor": 0,
+            "scoreAgainst": 1,
+            "touches": 4,
+            "forwardImpulse": 3.2436632213241112
           },
-          "delta": 2
+          "delta": -1
         }
       ],
       "limitation": "Four paired starts per agent, two weather conditions, one archived opponent policy. Descriptive small-sample evidence, not proof of general improvement."
     },
-    "worldSaveBytes": 1839273,
+    "worldSaveBytes": 2323834,
     "lowPower": {
-      "fps": 30.00075001875046,
-      "renderMs": 2.7698732420904078,
-      "workerTickMs": 0.11367155990160985,
-      "actualPace": 0.9939534498475181,
+      "fps": 30.001500075003726,
+      "renderMs": 3.5476030533713936,
+      "workerTickMs": 0.1268081539591212,
+      "actualPace": 1.0019347705922843,
       "backing": [
         944,
         664
       ],
       "longTasks": [
-        118,
-        117,
-        122,
-        123,
-        130,
-        128,
-        62,
-        131,
         139,
-        130
+        147,
+        159,
+        152,
+        163,
+        160,
+        166,
+        166,
+        163,
+        51
       ]
     }
   },
-  "durationSeconds": 82.0,
+  "durationSeconds": 93.1,
   "limitations": [
     "Headless Chromium on the test host, not a gaming-GPU or user-laptop benchmark.",
     "Document injection used: enterprise policy blocks file and HTTP URL navigation. Real-origin IndexedDB save/reload is not verified.",

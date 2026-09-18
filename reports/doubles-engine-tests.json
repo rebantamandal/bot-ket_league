@@ -215,7 +215,7 @@
     "evaluation": {
       "kind": "paired-evaluation",
       "mode": "doubles",
-      "date": "2026-09-17T16:01:08.773Z",
+      "date": "2026-09-18T06:08:03.880Z",
       "archiveId": 1,
       "secondsPerGame": 3,
       "gameCount": 16,
@@ -294,13 +294,13 @@
             "scoreFor": 0,
             "scoreAgainst": 0,
             "touches": 1,
-            "forwardImpulse": 0.9769004574570206
+            "forwardImpulse": 1
           },
           "current": {
             "scoreFor": 0,
             "scoreAgainst": 0,
             "touches": 1,
-            "forwardImpulse": 0.9769004574570206
+            "forwardImpulse": 1
           },
           "delta": 0
         },
@@ -313,13 +313,13 @@
             "scoreFor": 0,
             "scoreAgainst": 0,
             "touches": 1,
-            "forwardImpulse": 0.972762978567119
+            "forwardImpulse": 1
           },
           "current": {
             "scoreFor": 0,
             "scoreAgainst": 0,
             "touches": 1,
-            "forwardImpulse": 0.972762978567119
+            "forwardImpulse": 1
           },
           "delta": 0
         },
@@ -370,13 +370,13 @@
             "scoreFor": 0,
             "scoreAgainst": 0,
             "touches": 1,
-            "forwardImpulse": 0.9765004661373787
+            "forwardImpulse": 1
           },
           "current": {
             "scoreFor": 0,
             "scoreAgainst": 0,
             "touches": 1,
-            "forwardImpulse": 0.9765004661373787
+            "forwardImpulse": 1
           },
           "delta": 0
         },
@@ -389,13 +389,13 @@
             "scoreFor": 0,
             "scoreAgainst": 0,
             "touches": 1,
-            "forwardImpulse": 0.9736882568790836
+            "forwardImpulse": 1
           },
           "current": {
             "scoreFor": 0,
             "scoreAgainst": 0,
             "touches": 1,
-            "forwardImpulse": 0.9736882568790836
+            "forwardImpulse": 1
           },
           "delta": 0
         }

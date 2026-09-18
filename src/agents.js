@@ -6,6 +6,34 @@
   'use strict';
   const { clamp, wrap, lerp, V, Q, RNG } = TM,
     { X, Z, BR, curvature, flat } = TP;
+  // Authored planner and controller constants. tools/ai-tune.cjs searches these by playing the frozen
+  // baseline; a page never sets BOTKET_AI_TUNE, so live play always uses AI_DEFAULTS.
+  const AI_DEFAULTS = Object.freeze({
+    contactBase: 2.95,
+    contactMissed: 1.6,
+    contactAngle: 0.22,
+    contactReady: 0.55,
+    contactBlocked: 0.65,
+    contactUrgency: 0.65,
+    contactDeadline: 1.15,
+    clearBase: 1.2,
+    clearUrgency: 2.75,
+    shadowBase: 0.4,
+    shadowUrgency: 1.65,
+    shadowGoalSide: 0.7,
+    refuelNeed: 1,
+    refuelUrgent: 0.8,
+    backMin: 1.8,
+    backMax: 5.5,
+    placement: 0.4,
+    strikeSpeed: 22,
+    approachCap: 29,
+    boostDesired: 28,
+    boostAngle: 0.15,
+    turnSpeed: 31,
+    commitScale: 1
+  });
+  const tune = () => root.BOTKET_AI_TUNE || AI_DEFAULTS;
   const NF = 64,
     enemy = (w, c) =>
       w.cars.filter(a => a.side !== c.side).sort((a, b) => distance(a, w.ball) - distance(b, w.ball))[0] ||
@@ -38,6 +66,15 @@
       this.dodgeReleased = false;
       this.policyProbe = 0;
       this.migrated = false;
+      // Temperament: a small, fixed bias drawn from this car's own seed, so the four cars do not
+      // play identically and a match does not settle into one rhythm. Bounded, and the learner
+      // adapts on top of it.
+      this.temper = data?.temper || {
+        aggression: +(0.75 + this.rng.next() * 0.55).toFixed(3),
+        patience: +(0.75 + this.rng.next() * 0.55).toFixed(3),
+        boostHunger: +(0.7 + this.rng.next() * 0.7).toFixed(3),
+        flair: +(0.6 + this.rng.next() * 0.9).toFixed(3)
+      };
       if (data) this.load(data);
     }
     clear() {
@@ -302,7 +339,21 @@
         role: primary ? 'challenge' : team.urgency > 0.3 ? 'cover' : 'support'
       };
     }
+    // Aggression from temperament and the scoreboard: a team two goals down commits more, a team
+    // two up holds shape. It keeps long sessions from settling into one pattern.
+    drive(w, c) {
+      const team = c.side > 0 ? 0 : 1,
+        margin = clamp(w.score[team] - w.score[1 - team], -3, 3),
+        // A mood for this round, derived from the round number and car rather than drawn, so it
+        // varies round to round without disturbing the learner's own random stream.
+        seed = Math.sin(w.round * 12.9898 + c.id * 78.233) * 43758.5453,
+        mood = 0.85 + 0.32 * (seed - Math.floor(seed));
+      return clamp(this.temper.aggression * mood * (1 - margin * 0.09), 0.62, 1.45);
+    }
     candidates(w, c) {
+      const K = tune(),
+        drive = this.drive(w, c),
+        temper = this.temper;
       const b = w.ball,
         o = enemy(w, c),
         d = distance(c, b),
@@ -328,10 +379,13 @@
       choices.sort((a, b) => a.cost - b.cost);
       const samples = choices.slice(0, 4);
       if (!samples.length) samples.push({ q: { ...b, t: 0.3 }, eta: d / 15, delay: 1 });
+      // Every opponent between the ball and their goal can cover a shot, so placement scores the
+      // worst gap, not just the deepest defender's.
+      const defenders = w.cars.filter(a => a.side !== c.side);
       for (const { q, eta } of samples)
-        for (const aim of [-1, 0, 1]) {
+        for (const aim of [-1, -0.55, 0, 0.55, 1]) {
           const gx = s * (X + 1.5),
-            gz = aim * 5.5,
+            gz = aim * 6.4,
             ln = this.lane(w, c, q, gx, gz),
             along = (q.x - c.x) * ln.nx + (q.z - c.z) * ln.nz,
             cross = -(q.x - c.x) * ln.nz + (q.z - c.z) * ln.nx,
@@ -346,19 +400,35 @@
             contest = clamp((arrival - oppETA) / 1.1, -1, 1),
             ready = clamp((alignment + 0.1) / 1.05, 0, 1),
             safety = clamp((s * (b.x - c.x) + 5) / 12, 0, 1);
+          // Shot placement: a corner the keeper cannot cover beats a shot straight at them.
+          let placement = 0;
+          if (defenders.length) {
+            const flight = clamp(Math.hypot(gx - q.x, gz - q.z) / 30, 0.15, 1.2),
+              reach = 3.4 + 12 * flight,
+              onTarget = clamp((s * (gx - q.x)) / 30, 0, 1);
+            let worst = Infinity;
+            for (const a of defenders) {
+              // Only defenders goal-side of the ball can cut the shot off.
+              if (s * (a.x - q.x) < -2) continue;
+              worst = Math.min(worst, Math.abs(gz - (a.z + a.vz * flight)));
+            }
+            if (worst < Infinity) placement = clamp((worst - reach) / 7, -1, 1) * onTarget;
+          }
           let prior =
-            2.95 -
-            1.6 * missed -
+            K.contactBase -
+            K.contactMissed * missed -
             0.24 * early -
-            0.22 * angle -
-            0.55 * (1 - ready) -
-            0.65 * ln.blocked -
+            K.contactAngle * angle -
+            K.contactReady * (1 - ready) -
+            K.contactBlocked * ln.blocked -
             0.035 * q.t -
             0.01 * d;
           prior -= Math.max(0, q.y - 2.2) * 0.13 + Math.max(0, contest) * 0.25;
-          prior -= th.urgency * (1 - safety) * 0.65;
+          prior += K.placement * placement * temper.flair;
+          prior += (drive - 1) * 0.55;
+          prior -= th.urgency * (1 - safety) * K.contactUrgency;
           if (coop && distance(o, b) + 4 < d) prior -= 1.0;
-          if (th.deadline < 2.2) prior -= 1.15;
+          if (th.deadline < 2.2) prior -= K.contactDeadline;
           if (along < 0) prior -= 0.28;
           plans.push({
             kind: 'contact',
@@ -397,7 +467,11 @@
             alignment = ((q.x - c.x) * ln.nx + (q.z - c.z) * ln.nz) / (distance(c, q) || 1),
             lateness = Math.max(0, eta - q.t);
           const prior =
-            1.2 + 2.75 * th.urgency - 1.4 * lateness - 0.18 * Math.max(0, q.y - 2.2) - 0.4 * Math.max(0, -alignment);
+            K.clearBase +
+            K.clearUrgency * th.urgency -
+            1.4 * lateness -
+            0.18 * Math.max(0, q.y - 2.2) -
+            0.4 * Math.max(0, -alignment);
           plans.push({
             kind: 'contact',
             role: 'clear',
@@ -435,7 +509,14 @@
           lostRace = clamp((this.travel(c, b.x, b.z) - this.travel(o, b.x, b.z)) / 0.9, 0, 1),
           ownHalf = clamp((-s * b.x + 10) / 30, 0, 1);
         let prior =
-          0.4 + th.urgency * 1.65 + lostRace * 0.3 + (1 - goalSide) * 0.7 + ownHalf * 0.2 - 0.01 * cost - alpha * 0.12;
+          K.shadowBase * temper.patience +
+          th.urgency * K.shadowUrgency * temper.patience -
+          (drive - 1) * 0.45 +
+          lostRace * 0.3 +
+          (1 - goalSide) * K.shadowGoalSide +
+          ownHalf * 0.2 -
+          0.01 * cost -
+          alpha * 0.12;
         if (th.deadline < 3) prior += 0.18 - 0.2 * alpha;
         if (coop) prior -= 1;
         plans.push({
@@ -457,17 +538,19 @@
       for (let i = 0; i < w.pads.length; i++) {
         const pad = w.pads[i];
         if (pad.charge < 0.25 || c.boost > 80) continue;
+        const desperate = c.boost < 22;
         const cost = distance(c, pad),
           detour = cost + distance(pad, b) - d,
           need = 1 - c.boost / 100,
           goalSide = s * (b.x - pad.x) > 0,
           prior =
             0.3 +
-            (pad.big ? 2.3 : 1.3) * need * pad.charge -
+            (pad.big ? 2.3 : 1.3) * need * pad.charge * K.refuelNeed * temper.boostHunger -
             0.027 * cost -
             0.035 * detour -
-            th.urgency * (goalSide ? 1.5 : 3);
-        if (th.deadline < 3) continue;
+            th.urgency * (goalSide ? 1.5 : 3) +
+            (desperate && pad.big ? K.refuelUrgent : 0);
+        if (th.deadline < (desperate && goalSide ? 2 : 3)) continue;
         plans.push({
           kind: 'resource',
           role: 'refuel',
@@ -671,7 +754,10 @@
       else if (!w.learning || w.human === c.id || w.frozen?.[c.id]) this.clear();
       this.lastPhi = phi;
       const explore = w.learning && w.human !== c.id && !w.frozen?.[c.id] && (this.situation?.deadline || 9) > 1.6,
-        noise = Float64Array.from({ length: NF }, () => (explore ? this.rng.normal() * 0.042 : 0));
+        // Bolder cars try a wider spread of alternatives while learning.
+        noise = Float64Array.from({ length: NF }, () =>
+          explore ? this.rng.normal() * 0.042 * (0.7 + 0.6 * this.temper.flair) : 0
+        );
       for (const p of candidates) p.score = this.value(p);
       const top = candidates.reduce((a, b) => (a.score > b.score ? a : b)),
         shortlist = candidates.filter(p => p.score > top.score - 0.5);
@@ -789,7 +875,8 @@
       }
     }
     control(w, c, dt) {
-      const b = w.ball,
+      const K = tune(),
+        b = w.ball,
         p = c.plan;
       if (!p) return;
       const sp = flat(c),
@@ -826,11 +913,16 @@
           along = dx * gx + dz * gz,
           cross = -dx * gz + dz * gx,
           alignment = along / (Math.hypot(dx, dz) || 1),
-          back = clamp(d * 0.22, 1.8, 5.5) + (p.contactOffset || 0);
+          back = clamp(d * 0.22, K.backMin, K.backMax) + (p.contactOffset || 0);
         if (p.direct && p.role === 'clear') {
           tx = bx;
           tz = bz;
           desired = 35;
+          // Arriving from the goal-facing side would push the ball into our own net. Strike its inner
+          // face instead, deflecting it toward the nearest sideline.
+          const push = [bx - c.x, bz - c.z],
+            pushLength = Math.hypot(push[0], push[1]) || 1;
+          if ((s * push[0]) / pushLength < -0.25 && s * bx < -X * 0.45) tz = bz - (Math.sign(bz) || 1) * 2.2;
         } else if (along < 0.2) {
           const sign = cross >= 0 ? -1 : 1;
           if (Math.abs(cross) < 5.3) {
@@ -845,29 +937,25 @@
         } else if (alignment > 0.89 && Math.abs(cross) < 3.0) {
           tx = bx + gx * 2;
           tz = bz + gz * 2;
-          desired = clamp(22 + p.power * 13, 22, 36);
+          desired = clamp(K.strikeSpeed + p.power * 13, K.strikeSpeed, K.strikeSpeed + 14);
         } else {
           tx = bx - gx * back;
           tz = bz - gz * back;
-          desired = clamp(13 + along * 0.85, 11, 29);
+          desired = clamp(13 + along * 0.85, 11, K.approachCap);
         }
         tx = clamp(tx, -X + 0.9, X - 0.9);
         tz = clamp(tz, -Z + 0.9, Z - 0.9);
         const approach = wrap(Math.atan2(bz - c.z, bx - c.x) - c.heading),
           arrival = clamp((d - 2.7) / Math.max(9, sp), 0.04, 0.7),
           futureHeight = Math.max(BR, b.y + b.vy * arrival - 0.5 * w.gravity * arrival * arrival);
-        if (
-          c.ground &&
-          c.jumps === 0 &&
-          d < 10 &&
-          d > 3 &&
-          futureHeight > 2.25 &&
-          futureHeight < 6.5 &&
-          Math.abs(approach) < 0.25 &&
-          arrival < 0.46 &&
-          alignment > 0.5
-        ) {
-          this.jumpSchedule = 0.18;
+        // Jump for a high ball. A short hop covers a bouncing ball nearby; with boost in the tank the
+        // car commits earlier and higher and flies to the intercept, the way a player takes an aerial.
+        const aerialBall = p.interceptHeight || futureHeight,
+          committed =
+            aerialBall > 3.2 && aerialBall < 9 && c.boost > 30 && d < 20 && alignment > 0.78 - 0.08 * this.temper.flair,
+          hop = futureHeight > 2.25 && futureHeight < 6.5 && d < 10 && d > 3 && arrival < 0.46 && alignment > 0.5;
+        if (c.ground && c.jumps === 0 && Math.abs(approach) < (committed ? 0.3 : 0.25) && (hop || committed)) {
+          this.jumpSchedule = committed ? 0.26 : 0.18;
           this.dodgeReleased = false;
         }
         if (!c.ground) {
@@ -877,7 +965,7 @@
           yaw = clamp(Math.atan2(local[2], Math.max(0.1, local[0])) * 2, -1, 1);
           const U = Q.v(c.q, [0, 1, 0]);
           roll = clamp(-U[2] * 1.8, -1, 1);
-          boost = Math.abs(yaw) < 0.22 && Math.abs(pitch) < 0.45 && d < 15 && b.y > 2.5 && c.boost > 5;
+          boost = Math.abs(yaw) < 0.26 && Math.abs(pitch) < 0.55 && d < 22 && b.y > 2.2 && c.boost > 5;
           if (
             c.jumps === 1 &&
             c.jumpTime > 0.24 &&
@@ -940,7 +1028,7 @@
       } else {
         // Lateral velocity feedback is subordinate to the heading error, avoiding oscillation.
         steer = clamp(angle * 2.65 - c.slip * 0.035, -1, 1);
-        const turnSpeed = clamp(31 / (1 + Math.abs(angle) * 2.15), 6.5, 35);
+        const turnSpeed = clamp(K.turnSpeed / (1 + Math.abs(angle) * 2.15), 6.5, 35);
         if (Math.abs(angle) > 0.17) desired = Math.min(desired, turnSpeed);
         drift = Math.abs(angle) > 1.25 && sp > 14 && c.ground;
       }
@@ -954,10 +1042,11 @@
       if (reverse) throttle = vf > desired + 0.8 ? -1 : clamp(delta / 2, -0.7, 0.1);
       if (c.ground)
         boost =
-          desired > 28 &&
-          Math.abs(angle) < 0.15 &&
+          desired > K.boostDesired &&
+          Math.abs(angle) < K.boostAngle &&
           toTarget > 6 &&
           vf > 10 &&
+          vf < 41 &&
           c.boost > 5 &&
           p.kind !== 'resource' &&
           c.heat < (p.boostBudget || 0.88) + 0.1;
@@ -1003,12 +1092,14 @@
       const expired = c.plan?.kind === 'contact' && c.planAge > Math.max(0.12, c.plan.t * 0.8);
       const rotated =
         w.mode === 'doubles' && c.plan?.assignment !== w.teamState?.[c.side]?.challenger && c.planAge > 0.12;
-      if (!c.plan || c.planAge > (c.plan.commitTime || 0.4) || unexpected || expired || rotated) this.choose(w, c);
+      if (!c.plan || c.planAge > (c.plan.commitTime || 0.4) * tune().commitScale || unexpected || expired || rotated)
+        this.choose(w, c);
       this.control(w, c, dt);
     }
     save() {
       return {
         schema: 2,
+        temper: this.temper,
         controllerVersion: 11,
         w: Array.from(this.w),
         updates: this.updates,
@@ -1033,6 +1124,8 @@
       this.w.set(d.w);
       this.migrated = d.w.length !== NF;
       this.updates = d.updates;
+      if (d.temper && ['aggression', 'patience', 'boostHunger', 'flair'].every(k => Number.isFinite(d.temper[k])))
+        this.temper = { ...d.temper };
       this.rewardSum = Number.isFinite(d.rewardSum) ? d.rewardSum : 0;
       this.weightMotion = d.weightMotion || 0;
       this.planCount = d.planCount || 0;
@@ -1156,6 +1249,6 @@
       }
     }
   };
-  root.TBrain = { Brain, NF };
+  root.TBrain = { Brain, NF, AI_DEFAULTS };
   if (typeof module !== 'undefined') module.exports = root.TBrain;
 })(globalThis);

@@ -1,95 +1,127 @@
-# Bot-ket League
+# Bo-ket League
 
-An offline, systemic car-soccer world where self-playing cars learn in changing weather. (Formerly Touchline.) Version 11 adds optional four-car 2v2 while retaining the minimal Atelier interface, the two-car duel, the legacy cooperative exercise, and the persistent systemic world.
+Four cars teach themselves car-soccer inside a world that keeps changing around them: a day/night clock, weather fronts, and turf that wears into mud where they drive. It is one HTML file, runs offline, and needs nothing installed to play.
 
-## Start
+![Live 2v2 play](docs/play.gif)
 
-Open `index.html` in a modern desktop browser. Nothing is fetched from a network; there are no assets, accounts, libraries or font downloads. The whole site is that single file.
+## Run it
 
-Use the **1v1 / 2v2** switch at the upper right of the arena. A fresh document begins in 1v1; the saved world, when available, restores its own mode.
+Open `index.html` in any modern browser. Nothing is fetched, installed or signed into.
 
-- Blue: **Mica** (ID 0) and **Slate** (ID 2).
-- Orange: **Ember** (ID 1) and **Sienna** (ID 3).
+```sh
+git clone https://github.com/rebantamandal/bot-ket_league.git
+cd bot-ket_league
+# then open index.html — or, to work on the source:
+npm install && npm run dev      # rebuilds index.html whenever src/ changes
+```
 
-All four cars have their own controls, contact history, policy weights, eligibility traces, exploration state and updates. Select a car or its Fieldnotes tab to inspect it. Camera chapters include both added players; keys 5 and 6 follow Slate and Sienna. Manual control still takes over Mica only; the other three can continue learning.
+![Daylight 2v2](docs/hero.png)
 
-Switching formats starts a new score and kickoff, not a resumable separate physical match. Each format retains its own learned policies and journal metadata. The same weather clock, surface moisture/heat, props and resource charge continue across changes. Existing cars retain engine heat and boost; newly introduced cars begin with their initial physical parameters. A full active-world export includes all four cars, physical state, replay clips, learning traces, mode policy banks and history.
+## The world
 
-## Team play: authored capabilities, online preferences
+The simulation runs at a fixed 120 Hz in a Web Worker, so the interface never changes what happens on the pitch.
 
-The predictive planner estimates arrival times, obstacle/opponent lanes and goal danger. Every 0.12 simulated seconds a deterministic reach-time coordinator nominates one challenger per side, with hysteresis. The teammate evaluates separated support/cover positions. Assignments change as the play changes. Close duplicate challenges are excluded by an authored safety rule.
+| | |
+|---|---|
+| ![Night rain](docs/night-rain.png) | **Weather that shows.** The sun follows the world clock, so shadows swing round through the day, warm at dusk and give way to floodlights. Rain slants with the wind and splashes on the turf, cloud shadows drift, flags stream, mist settles on still mornings. |
+| ![Worn turf](docs/turf-wear.png) | **Turf wear.** Tyres and boost scuff the grass under both wheel tracks. Nothing decides where the paths go — they appear where the cars actually drive, and grass regrows in sun and moisture. |
+| ![Mud at night](docs/turf-mud.png) | **Mud.** Rain turns worn ground to mud, and mud costs grip. The planner already weighs grip along its route, so the cars start avoiding the lanes they wore out. |
 
-A challenger can select an ordinary contact aimed toward a reachable teammate. Pass candidates compete with shots, clearances and resource decisions. No pass teleports the ball, adds a scripted impulse or compels a goal. Teammates are solid physical bodies and can bump each other.
+Also live: moisture and heat spreading across a 64×40 surface grid, evaporation, engine heat, finite boost pads that recharge slower on hot ground, physical props, and an optional cellular life layer (Conway, or an ecological variant that reacts to moisture and tyres).
 
-Each learner adapts **64 bounded plan-scoring coefficients** during active play. The original 52 features retain their meanings; 12 additional features describe pass lanes, teammate separation, assignment, double-commitment risk and coverage. The 12 additions are zero in 1v1. Goals and useful touch rewards are shared within each team. Merely accumulating passes earns no extra bonus.
+## The cars
 
-This is not end-to-end neural control or proof that coordination was invented from scratch. Driving, interception, team assignment, support and pass candidates are authored capabilities. Learned preferences can change, but a rise in update count is not evidence of improved strength.
+![Fieldnotes](docs/fieldnotes.png)
 
-## What the observer actually records
+Each car plans a few hundred milliseconds ahead: it predicts the ball's path, lists candidate plans (strike, clear, shadow the goal, refuel, support, pass), scores them, and drives the winner with a hand-written controller. A small online learner (TD(λ) over 64 features) adjusts those scores from experience while it plays.
 
-A received pass requires two different same-team physical contacts, under six seconds apart and more than six world units apart. An opponent contact breaks the chain. A recent reception followed by a same-team goal can yield an assist. These are observational definitions; an incidental teammate reception can meet them without a deliberate pass plan.
+- **Shot placement** aims at the part of the goal no defender between ball and net can cover, using where they will be when the shot arrives.
+- **Aerials**: with boost in the tank, a car commits early to a high ball and flies to the intercept.
+- **Temperament**: every car draws a fixed bias for aggression, patience, boost appetite and flair, so the four do not play alike. It is saved with the policy and shown as plain numbers in Fieldnotes.
+- **Momentum and mood**: a team two goals down commits more, a team two up holds shape, and each round carries a mood of its own, so long sessions do not settle into one rhythm.
+- **Teamwork in 2v2** is a reach-time coordinator with hysteresis: one challenger per side, the other covering. Passes are ordinary physical contacts aimed at a teammate — nothing teleports the ball.
 
-Fieldnotes shows current team assignment and the actual selected plan. Pass/assist counters are aggregate counts for the current mode, not individual-player statistics. The observer still labels patterns as candidate, recurring or learning-associated. It is read-only and never modifies controls, positions or rewards. Historical motion replays explicitly hide unsaved decision estimates.
+Driving, interception and rotation are authored. Learning adjusts preferences between plans within bounded limits; it does not invent new skills.
 
-## The persistent world
+## Watching and poking
 
-Day/night cycles, gradual rain and wind fronts, moisture-dependent grip and cooling, boost heat, evaporation, finite temperature-sensitive boost resources, physical props and interventions remain active. Goals do not reset the environmental fields. Conway and the separate ecological surface remain available. Ordinary physics remains fixed at 120 Hz in the worker.
+![World tab](docs/world-panel.png)
 
-## History, saves and migration
+- **Cameras**: overview, per-car follow, ball cam, free orbit. A camera director cuts to the ball on goals and hands the view back.
+- **Tools**: place water, heat, a heavy ball, an impulse or a wind gust anywhere on the pitch; force a storm; scrub the time of day.
+- **Fieldnotes**: what each car intends and why, the plans it compared, its learned weights, and a journal of repeated approaches with outcome intervals.
+- **History**: policy snapshots, frozen head-to-head comparisons over matched seeds, and branch-a-moment what-ifs — all in a second worker, so live play never stalls.
+- **Saves**: the full world (physics, weather, surface, learners, replays) exports to a JSON file and restores exactly.
 
-A full save uses `touchline-world-v11`. Version-7 full-world files (World 07 through Atelier 10) and earlier supported policy files can be imported. Old 26/52-feature coefficients are padded with zeros, not retrained or fabricated. Physical state is retained when the older file contains it, but future decisions can differ under the new planner. Older releases do not understand the new four-player save. Import deliberately releases held keys and returns manual control to the AI; it does not restore stuck key presses.
+## Controls
 
-Historical comparisons in 2v2 evaluate the current **team** against its archived counterpart across matched seeds, dry/wet conditions and swapped sides. The 16 games are a small descriptive sample, not a general skill certificate. Historical sparring freezes both orange policies while the two blue learners can continue. Returning to live play restores the two orange policies that were kept aside. Saved-moment branches simulate all four agents without altering the live world.
+| Input | Action |
+|---|---|
+| `P` / `Space` | Pause and resume |
+| `1`–`6` | Cameras: arena, Mica, Ember, ball, Slate, Sienna |
+| `[` `]` | Simulation speed, 0.5× to 4× |
+| `I` · `H` · `F` | Fieldnotes · focus view · fullscreen |
+| Drag the arena | Orbit the camera |
+| WASD / arrows · Shift · Space · Ctrl · Q/E | Drive Mica: steer · boost · jump · powerslide · air roll |
+| Gamepad | Start takes control; stick steers and pitches, triggers drive, A jumps, B boosts, X powerslides, bumpers air-roll |
 
-Autosave depends on browser support and permissions. Portable world-file export/import is the reliable explicit backup. The test browser blocks ordinary file/HTTP navigation, so non-opaque-origin autosave/reload could not be verified here.
+## How it is built
 
-## Performance and graphics
+```
+build.py  →  index.html         one file, four inline scripts, no assets
+                ├── worker      math, weather, field, physics, agents, observer, state, evaluation, runtime
+                └── page        renderers (WebGL2 with a Canvas fallback) and the interface
+```
 
-Automatic rendering retains the existing depth-lit WebGL2 path and cached Canvas fallback. Both have four player models. Shared ball-trajectory queries are cached within each simulation step. Rendering quality never changes the physics timestep or learned state. Follow cameras now cache the entire static arena before transforming it, preventing clipped edges in the lightweight path. Actual measured samples and limitations are in `VERIFICATION.md`.
+| File | Role |
+|---|---|
+| `src/physics.js` | Arena, cars, ball, collisions, rewards, events |
+| `src/agents.js` | Plan generation, scoring, learning, driving controller, 2v2 coordinator |
+| `src/field.js`, `src/weather.js` | Surface moisture, heat, wear and life; day/night and weather fronts |
+| `src/observer.js` | Read-only pattern journal and replay clips |
+| `src/state.js`, `src/evaluation.js`, `src/runtime.js` | Saves, frozen comparisons, the worker loop |
+| `src/renderer-atelier.js` | WebGL2 scene and the cached Canvas renderer |
+| `src/app.js` | Worker bridge, interface, input, audio |
+
+## Measuring the AI
+
+Claims about the AI are checked, not asserted. `npm run ai:bench` plays the current planner against the one in git, every seed twice with the sides swapped and learning frozen:
+
+```sh
+npm run ai:bench -- --games 400        # goal difference with a 95% interval
+npm run ai:tune                        # search the authored constants against that baseline
+```
+
+Identical planners score exactly level, so a result inside the interval means no measured change. The current planner measures **+0.17 goals per game in 1v1** (95% CI 0.00–0.33) and **−0.06 in 2v2** (−0.23 to +0.10) against the previous one over 400 games per mode, with 8–16% fewer own goals. Several plausible ideas — a full-boost kickoff rush, back-post rotation, a round of constant tuning — measured worse or flat and were dropped.
 
 ## Development
 
-Requirements: Node.js 18+ and Python 3. The built `index.html` itself needs nothing.
+Requirements: Node.js 18+ and Python 3 (standard library only). The built page needs neither.
 
 ```sh
-npm install          # Prettier only
-npm run dev          # rebuild index.html whenever src/ changes; reload the page to see it
-npm run build        # one-off build (python build.py)
-npm run format       # Prettier over src/, tests/ and tools/
+npm run build            # build index.html
+npm run format           # Prettier over src/, tests/ and tools/
+npm test                 # 52 engine tests
+npm run test:build       # deterministic rebuild and syntax audit
+npm run fingerprint      # hash 90 s of seeded play; compare before and after a refactor
 ```
 
-### Source layout
-
-| File | Runs in | Role |
-|---|---|---|
-| `math.js` | both | vectors, quaternions, seeded RNG |
-| `weather.js`, `field.js` | worker | day/night and weather fronts; moisture/heat/life grid |
-| `physics.js` | worker | `World`: arena, cars, ball, collisions, rewards, events |
-| `agents.js` | worker | `Brain` plan scoring + learning, driving controller, 2v2 coordinator |
-| `observer.js` | worker | read-only pattern journal and replay clips |
-| `state.js`, `evaluation.js`, `runtime.js` | worker | saves, frozen comparisons, the worker message loop |
-| `renderer.js`, `renderer-atelier.js` | main | Canvas and WebGL2 renderers (presentation only) |
-| `app.js` | main | `App`: worker bridge, UI, input, audio |
-
-`build.py` pastes the worker modules into a `text/plain` script that `App` starts as a Blob Web Worker.
-
-### Tests
-
-```sh
-npm test                 # Node engine suites
-npm run test:build       # deterministic rebuild + syntax audit
-npm run fingerprint      # hash of 90 s of seeded play; compare before/after refactors
-```
-
-Browser suites need Playwright in a local virtual environment:
+Browser tests need Playwright in a local virtual environment:
 
 ```sh
 python -m venv .venv
-.venv/Scripts/python -m pip install playwright     # .venv/bin/python on macOS/Linux
+.venv/Scripts/python -m pip install playwright        # .venv/bin/python on macOS and Linux
 .venv/Scripts/python -m playwright install chromium
-.venv/Scripts/python tests/doubles-browser.test.py # likewise fieldunit-, world-browser
+.venv/Scripts/python tests/doubles-browser.test.py    # likewise fieldunit- and world-browser
 ```
 
-They use Playwright's bundled Chromium unless `CHROMIUM_PATH` is set. Pages are injected rather than navigated. An unavailable WebGL context is reported as skipped, not passed. Suites rewrite their JSON files in `reports/`.
+They inject the built page and drive the real worker, renderer and controls: 186 checks across the three suites, including real WebGL rendering and recovery from a lost GPU context where a GPU is available.
 
-This is an original car-soccer experiment, not Rocket League or an endorsed Rocket League product.
+## Limits
+
+- The learner adjusts scores between authored plans within bounded limits. It is not end-to-end neural control, and a rising update count is not evidence of a stronger car.
+- The observer's journal reports matched-context intervals; self-play attempts are not independent experiments.
+- Replays store quantised visual samples. Physics, random state and learned values never use that quantisation.
+- Autosave depends on browser storage; the exported world file is the reliable backup.
+
+An original car-soccer experiment. Not Rocket League, and not a trained Rocket League bot.

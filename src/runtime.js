@@ -207,6 +207,7 @@ function createRuntime(send) {
         heat: world.cars[i].heat,
         grip: world.cars[i].grip,
         plan: b.planEvidence || null,
+        temper: b.temper,
         frozen: !!world.frozen[i]
       })),
       patternCount: world.observer.patterns.length,
@@ -240,6 +241,7 @@ function createRuntime(send) {
         wet: Array.from(world.field.wet),
         heat: Array.from(world.field.heat),
         life: world.field.living ? Array.from(world.field.life) : null,
+        wear: Array.from(world.field.wear),
         revision: world.field.revision
       },
       archives: archives.map(({ policies, ...a }) => a),
@@ -254,6 +256,16 @@ function createRuntime(send) {
       events: events.splice(0),
       notices: notices.splice(0)
     });
+  }
+  // Held controls from the page: known digital keys as booleans, analog axes clamped to [-1, 1].
+  const MANUAL_KEYS = ['forward', 'reverse', 'left', 'right', 'boost', 'jump', 'drift', 'rollLeft', 'rollRight'],
+    MANUAL_AXES = ['throttle', 'steer', 'pitch', 'roll'];
+  function sanitizeManual(value) {
+    const out = {};
+    if (!value || typeof value !== 'object') return out;
+    for (const k of MANUAL_KEYS) if (value[k]) out[k] = true;
+    for (const k of MANUAL_AXES) if (Number.isFinite(value[k])) out[k] = TM.clamp(value[k], -1, 1);
+    return out;
   }
   function tick() {
     const now = performance.now(),
@@ -280,7 +292,9 @@ function createRuntime(send) {
       paceAt = now;
       paceWorld = world.time;
     }
-    if (!hidden && now - sendAt >= 32) {
+    // Paused: nothing moves, so sample less often. Every command still answers with fresh state.
+    const idle = paused && !replaying;
+    if (!hidden && now - sendAt >= (idle ? 250 : 32)) {
       sendAt = now;
       state();
     }
@@ -297,7 +311,7 @@ function createRuntime(send) {
       saveAt = now;
       send({ type: 'save', json: JSON.stringify(checkpoint()) });
     }
-    timer = setTimeout(tick, hidden ? 200 : 8);
+    timer = setTimeout(tick, hidden ? 200 : idle ? 50 : 8);
   }
   function ack(id, result) {
     if (id) send({ type: 'response', id, result });
@@ -348,7 +362,7 @@ function createRuntime(send) {
           world.cars[0].planAge = 10;
           break;
         case 'keys':
-          world.manual = m.value || {};
+          world.manual = sanitizeManual(m.value);
           break;
         case 'weather': {
           const next = new TWeather(1);
@@ -360,7 +374,7 @@ function createRuntime(send) {
           break;
         }
         case 'intervene':
-          if (!['wet', 'heat', 'sphere', 'impulse'].includes(m.kind) || !Number.isFinite(m.x + m.z))
+          if (!['wet', 'heat', 'sphere', 'impulse', 'gust'].includes(m.kind) || !Number.isFinite(m.x + m.z))
             throw Error('Invalid intervention.');
           world.intervene(m.kind, m.x, m.z);
           detail();

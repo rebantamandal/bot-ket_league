@@ -2297,3 +2297,35 @@ body[data-match='doubles'] .corner-status {
     right: 15px;
   }
 }
+
+/* 12 - Refinements. Overlays that sit on the moving scene use a light frosted panel so they stay
+   legible without hiding the arena; the overview keeps its flat, unbacked scoreboard. */
+#stage:not([data-camera='arena']) .scoreboard,
+#stage:not([data-camera='arena']) .weather-badge,
+#stage:not([data-camera='arena']) .stage-mode,
+#stage:not([data-camera='arena']) #resetCamera,
+.notice button {
+  background: color-mix(in srgb, var(--panel) 74%, transparent);
+  -webkit-backdrop-filter: blur(12px) saturate(1.1);
+  backdrop-filter: blur(12px) saturate(1.1);
+}
+.notice button {
+  border-color: color-mix(in srgb, var(--line) 70%, transparent);
+}
+@media (min-width: 681px) {
+  .score {
+    font-size: 40px;
+    letter-spacing: -1.3px;
+  }
+  .teamname,
+  .weather-badge {
+    font-size: 10px;
+  }
+}
+
+.temperament {
+  margin: 18px 0 2px;
+  font: 8px var(--mono);
+  letter-spacing: 0.8px;
+  color: var(--muted);
+}

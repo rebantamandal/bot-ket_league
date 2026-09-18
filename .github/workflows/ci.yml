@@ -1,0 +1,40 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  engine:
+    name: Format, engine tests and build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: npm ci
+      - run: npm run format:check
+      - run: npm test
+      # Rebuilds into a temp file and fails if the committed index.html is stale or any script does not parse.
+      - run: python tests/build-audit.py
+
+  browser:
+    name: Browser workflows
+    runs-on: ubuntu-latest
+    needs: engine
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install playwright
+      - run: python -m playwright install --with-deps chromium
+      # No GPU on hosted runners: the suites report real WebGL checks as skipped, not passed.
+      - run: python tests/fieldunit-browser.test.py
+      - run: python tests/doubles-browser.test.py
+      - run: python tests/world-browser.test.py

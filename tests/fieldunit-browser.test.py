@@ -5,6 +5,7 @@ Worker-failure coverage below is deliberate fault injection, not a real crash.
 from pathlib import Path
 from playwright.sync_api import sync_playwright
 import os
+import re
 import json, time, hashlib, traceback
 R=Path(__file__).resolve().parents[1]
 results=[];errors=[];requests=[];started=time.time();pg=None
@@ -21,7 +22,7 @@ with sync_playwright() as p:
  def req(kind,**args):return ev('(m)=>app.request(m.kind,m.args)',{'kind':kind,'args':args})
  try:
   pg.set_content((R/'index.html').read_text(),wait_until='domcontentloaded');pg.wait_for_function('window.touchlineReady===true');pg.wait_for_timeout(2300)
-  check('11 identity is built into the actual cartridge',pg.title()=='Bot-ket League' and pg.inner_text('.edition')=='11')
+  check('11 identity is built into the actual cartridge',pg.title()=='Bo-ket League' and pg.inner_text('.edition')=='11')
   check('All assets are bundled with no font or external requests',not requests)
   check('Default stage does not expose settings or technical cards',not pg.is_visible('#inspector') and not pg.is_visible('#tacticalCard'))
   check('Overview score uses flat typography without a hardware backing',ev('getComputedStyle(document.querySelector(".scoreboard")).backgroundColor==="rgba(0, 0, 0, 0)" && getComputedStyle(document.querySelector(".scoreboard")).boxShadow==="none"'))
@@ -42,7 +43,7 @@ with sync_playwright() as p:
   pg.click('#inspectButton');pg.wait_for_timeout(250)
   check('Opening Fieldnotes focuses its close button',ev('document.activeElement.id==="closeInspector"'))
   check('Wide-screen Fieldnotes does not disable the live controls',ev('!game.inert&&inspector.getAttribute("aria-modal")==="false"'))
-  check('Tactical display comes from real candidate measurements',ev('app.telemetry.agents[0].plan.role') is not None and 'probability' in pg.inner_text('#tacticalNote'))
+  check('Tactical display comes from real candidate measurements',ev('app.telemetry.agents[0].plan.role') is not None and re.search(r'\d+/100',pg.inner_text('#tacticalNote')) is not None)
   check('Arrival indicator is numeric or explicitly unavailable',ev('/^(\\d+\\.\\d{2} s|--)$/.test(arrivalEstimate.textContent)'))
   check('Compared plans show finite authored and bounded learned scores',ev('app.detail.agents.every(a=>a.alternatives.every(p=>Number.isFinite(p.score)&&Math.abs(p.correction)<=.721))'))
   pg.click('#closeInspector');check('Closing the inspector restores the opening button focus',ev('document.activeElement.id==="inspectButton"'))

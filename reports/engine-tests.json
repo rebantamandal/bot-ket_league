@@ -1,5 +1,5 @@
 {
-  "date": "2026-09-17T16:00:59.058Z",
+  "date": "2026-09-18T06:07:51.462Z",
   "results": [
     {
       "name": "Quaternion basis preserves the intended forward axis",
@@ -145,103 +145,29 @@
       "seed": 82,
       "simulatedSeconds": 239.99999999994606,
       "score": [
-        2,
-        3
+        3,
+        6
       ],
       "stats": {
-        "touches": 71,
-        "goals": 5,
-        "air": 10,
-        "saves": 1,
-        "passes": 0,
-        "bumps": 48,
-        "dodges": 5,
-        "wallTouches": 3,
-        "safetyResets": 0,
-        "assists": 0,
-        "teamBumps": 0
-      },
-      "updates": [
-        573,
-        599
-      ],
-      "learnedL2": [
-        0.1296597855044439,
-        0.12033523393411015
-      ],
-      "patterns": 40,
-      "stages": [
-        34,
-        6,
-        0
-      ],
-      "maxCarSpeed": 46,
-      "maxSecondsWithoutTouch": 16.125000000012633
-    },
-    {
-      "seed": 171,
-      "simulatedSeconds": 239.99999999994606,
-      "score": [
-        2,
-        4
-      ],
-      "stats": {
-        "touches": 105,
-        "goals": 6,
-        "air": 12,
-        "saves": 1,
-        "passes": 0,
-        "bumps": 48,
-        "dodges": 4,
-        "wallTouches": 4,
-        "safetyResets": 0,
-        "assists": 0,
-        "teamBumps": 0
-      },
-      "updates": [
-        613,
-        620
-      ],
-      "learnedL2": [
-        0.19567222351075922,
-        0.19021678786979293
-      ],
-      "patterns": 40,
-      "stages": [
-        39,
-        1,
-        0
-      ],
-      "maxCarSpeed": 45.296573894854504,
-      "maxSecondsWithoutTouch": 12.691666666662996
-    },
-    {
-      "seed": 234,
-      "simulatedSeconds": 239.99999999994606,
-      "score": [
-        4,
-        5
-      ],
-      "stats": {
-        "touches": 101,
+        "touches": 158,
         "goals": 9,
-        "air": 6,
-        "saves": 1,
+        "air": 34,
+        "saves": 0,
         "passes": 0,
-        "bumps": 47,
-        "dodges": 3,
-        "wallTouches": 5,
+        "bumps": 39,
+        "dodges": 2,
+        "wallTouches": 6,
         "safetyResets": 0,
         "assists": 0,
         "teamBumps": 0
       },
       "updates": [
-        569,
-        571
+        616,
+        617
       ],
       "learnedL2": [
-        0.1375555568865659,
-        0.16421325739306278
+        0.24064604674242038,
+        0.2126212601483189
       ],
       "patterns": 40,
       "stages": [
@@ -249,8 +175,82 @@
         4,
         0
       ],
-      "maxCarSpeed": 46.00000000000001,
-      "maxSecondsWithoutTouch": 13.158333333343805
+      "maxCarSpeed": 46,
+      "maxSecondsWithoutTouch": 11.791666666655942
+    },
+    {
+      "seed": 171,
+      "simulatedSeconds": 239.99999999994606,
+      "score": [
+        3,
+        4
+      ],
+      "stats": {
+        "touches": 130,
+        "goals": 7,
+        "air": 17,
+        "saves": 2,
+        "passes": 0,
+        "bumps": 34,
+        "dodges": 5,
+        "wallTouches": 9,
+        "safetyResets": 0,
+        "assists": 0,
+        "teamBumps": 0
+      },
+      "updates": [
+        623,
+        635
+      ],
+      "learnedL2": [
+        0.1591336873724448,
+        0.18799571172596038
+      ],
+      "patterns": 40,
+      "stages": [
+        38,
+        2,
+        0
+      ],
+      "maxCarSpeed": 43.19458288021506,
+      "maxSecondsWithoutTouch": 13.066666666666439
+    },
+    {
+      "seed": 234,
+      "simulatedSeconds": 239.99999999994606,
+      "score": [
+        7,
+        4
+      ],
+      "stats": {
+        "touches": 90,
+        "goals": 11,
+        "air": 11,
+        "saves": 1,
+        "passes": 0,
+        "bumps": 44,
+        "dodges": 2,
+        "wallTouches": 5,
+        "safetyResets": 0,
+        "assists": 0,
+        "teamBumps": 0
+      },
+      "updates": [
+        567,
+        581
+      ],
+      "learnedL2": [
+        0.20837341643710328,
+        0.16996442204073928
+      ],
+      "patterns": 40,
+      "stages": [
+        36,
+        4,
+        0
+      ],
+      "maxCarSpeed": 41.147409837940465,
+      "maxSecondsWithoutTouch": 11.558333333322821
     }
   ]
 }

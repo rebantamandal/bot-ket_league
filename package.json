@@ -1,8 +1,8 @@
 {
-  "name": "bot-ket_league",
+  "name": "bo-ket_league",
   "version": "0.11.0",
   "private": true,
-  "description": "Bot-ket League: offline systemic car-soccer world: weather, living turf and self-playing learners",
+  "description": "Bo-ket League: offline systemic car-soccer world: weather, living turf and self-playing learners",
   "scripts": {
     "build": "python build.py",
     "dev": "node tools/dev.cjs",
@@ -14,7 +14,9 @@
     "test:browser": "python tests/fieldunit-browser.test.py && python tests/doubles-browser.test.py && python tests/world-browser.test.py",
     "test:stress": "node tests/doubles-stress.cjs",
     "test:performance": "python tests/doubles-performance.py",
-    "previews": "python tests/capture-previews.py"
+    "previews": "python tests/capture-previews.py",
+    "ai:bench": "node tools/ai-benchmark.cjs",
+    "ai:tune": "node tools/ai-tune.cjs"
   },
   "devDependencies": {
     "prettier": "^3.9.7"

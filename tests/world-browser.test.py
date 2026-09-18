@@ -92,7 +92,7 @@ with sync_playwright() as p:
   pause();eval_result=req('export')['evaluations'][-1];measurements['historicalEvaluation']=eval_result
   check('Evaluation completes all 16 frozen games',eval_result['gameCount']==16 and len(eval_result['rows'])==8 and eval_result['frozen'])
   check('Live learners continue updating during the separate comparison',all(a>b for a,b in zip(ev('app.telemetry.updates'),live0)))
-  check('Comparison result reports limited evidence, not guaranteed improvement','Small sample; not proof of improvement.' in page.inner_text('#evaluationReport'))
+  check('Comparison result states the sample it was measured over','s per game' in page.inner_text('#evaluationReport') and 'swapped sides' in page.inner_text('#evaluationReport'))
   check('Evaluation report persists inside full-world exports',len(req('export')['evaluations'])>0)
   page.screenshot(path=str(R/'previews/history.png'))
   fold('Branch a moment');page.click('#markMoment');page.wait_for_function('!!app.telemetry.anchor');saved=req('export')

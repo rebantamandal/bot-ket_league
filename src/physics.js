@@ -332,17 +332,20 @@
       }
     }
     drive(c, dt) {
+      const m = this.manual,
+        // Analog axes (gamepad) take precedence over the digital keys when present.
+        axis = (k, fallback) => (Number.isFinite(m[k]) ? clamp(m[k], -1, 1) : fallback);
       const ctl =
         c.id === this.human
           ? {
-              throttle: (this.manual.forward ? 1 : 0) - (this.manual.reverse ? 1 : 0),
-              steer: (this.manual.right ? 1 : 0) - (this.manual.left ? 1 : 0),
-              boost: !!this.manual.boost,
-              jump: !!this.manual.jump,
-              pitch: (this.manual.reverse ? 1 : 0) - (this.manual.forward ? 1 : 0),
-              yaw: (this.manual.right ? 1 : 0) - (this.manual.left ? 1 : 0),
-              roll: (this.manual.rollRight ? 1 : 0) - (this.manual.rollLeft ? 1 : 0),
-              drift: !!this.manual.drift
+              throttle: axis('throttle', (m.forward ? 1 : 0) - (m.reverse ? 1 : 0)),
+              steer: axis('steer', (m.right ? 1 : 0) - (m.left ? 1 : 0)),
+              boost: !!m.boost,
+              jump: !!m.jump,
+              pitch: axis('pitch', (m.reverse ? 1 : 0) - (m.forward ? 1 : 0)),
+              yaw: axis('steer', (m.right ? 1 : 0) - (m.left ? 1 : 0)),
+              roll: axis('roll', (m.rollRight ? 1 : 0) - (m.rollLeft ? 1 : 0)),
+              drift: !!m.drift
             }
           : c.controller;
       c.applied = ctl;
@@ -450,7 +453,14 @@
         vel = V.add(vel, V.mul(F, (c.ground ? 19.83 : 21.17) * (1 - 0.28 * c.heat * c.heat) * dt));
         if (this.time % 0.08 < dt) this.field.paint(c.x - F[0] * 1.8, c.z - F[2] * 1.8, 'heat', 0.045, 2);
       }
-      if (c.ground && flat(c) > 2) this.field.disturb(c.x, c.z);
+      if (c.ground && flat(c) > 2) {
+        this.field.disturb(c.x, c.z);
+        // Sliding, hard acceleration and boost tear the turf more than cruising. Both wheel tracks
+        // scuff, so a worn lane ends up about as wide as a car.
+        const wear = dt * (0.14 + 0.05 * Math.min(6, Math.abs(c.slip || 0)) + (c.boosting ? 0.2 : 0)),
+          side = Q.v(c.q, [0, 0, 1]);
+        for (const offset of [-0.75, 0.75]) this.field.scuff(c.x + side[0] * offset, c.z + side[2] * offset, wear);
+      }
       if (!c.ground) {
         vel[0] += this.weather.windX * 0.023 * dt;
         vel[2] += this.weather.windZ * 0.023 * dt;
@@ -827,6 +837,20 @@
       if (type === 'sphere') {
         if (this.props.length >= 4) this.props.shift();
         this.props.push(sphere(x, 5, z, 1.4, 100));
+      }
+      // A gust pushes the air outward from the chosen point: the wind front turns toward it and
+      // strengthens, then the weather clock eases it back as usual.
+      if (type === 'gust') {
+        const w = this.weather,
+          dx = this.ball.x - x,
+          dz = this.ball.z - z,
+          d = Math.hypot(dx, dz) || 1;
+        w.targetX = clamp((dx / d) * 7, -12, 12);
+        w.targetZ = clamp((dz / d) * 7, -12, 12);
+        w.windX = w.targetX;
+        w.windZ = w.targetZ;
+        w.frontIn = Math.max(w.frontIn, 25);
+        w.updateDerived();
       }
       if (type === 'impulse') {
         const dx = this.ball.x - x,

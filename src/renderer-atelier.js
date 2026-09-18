@@ -145,6 +145,15 @@
     metal: rgb('#b5c7c4'),
     gold: rgb('#d7b778')
   };
+  // Shared by the WebGL scene, the Canvas scene and the inspector portrait.
+  // Car origin sits CLEAR (0.53) above the turf, so a mount at y = -0.01 rests the tyre on it.
+  const WHEEL_RADIUS = 0.52,
+    WHEEL_MOUNTS = [
+      [-1.1, -0.01, -1],
+      [-1.1, -0.01, 1],
+      [1.12, -0.01, -1],
+      [1.12, -0.01, 1]
+    ];
   class Geo {
     constructor() {
       this.a = [];
@@ -342,22 +351,23 @@ void main(){vec4 p=uModel*vec4(aP,1.);vP=p.xyz;vLocal=aP;vN=normalize(mat3(uMode
   const FS = `#version 300 es
 precision highp float;
 in vec3 vP,vN,vC,vLocal;in vec2 vM;in vec4 vShadow;
-uniform vec3 uEye,uSun;uniform float uNight,uCloud,uRain,uOpacity,uShadows;
+uniform vec3 uEye,uSun;uniform float uNight,uCloud,uRain,uOpacity,uShadows,uWarm;
 uniform sampler2D uShadow,uField;uniform vec4 uBodies[5];
 out vec4 frag;
 float rounded(vec2 p,vec2 b,float r){vec2 q=abs(p)-b+r;return length(max(q,0.))+min(max(q.x,q.y),0.)-r;}
-float shadow(){vec3 p=vShadow.xyz/vShadow.w*.5+.5;if(uShadows<.5||p.x<0.||p.x>1.||p.y<0.||p.y>1.||p.z>1.)return 1.;float bias=max(.0010,.0035*(1.-dot(normalize(vN),uSun)));float s=0.;vec2 t=1./vec2(textureSize(uShadow,0));for(int x=-1;x<=1;x++)for(int y=-1;y<=1;y++){s+=p.z-bias>texture(uShadow,p.xy+vec2(float(x),float(y))*t).r?0.:1.;}return .48+.52*s/9.;}
+float shadow(){vec3 p=vShadow.xyz/vShadow.w*.5+.5;if(uShadows<.01||p.x<0.||p.x>1.||p.y<0.||p.y>1.||p.z>1.)return 1.;float bias=max(.0010,.0035*(1.-dot(normalize(vN),uSun)));float s=0.;vec2 t=1./vec2(textureSize(uShadow,0));for(int x=-1;x<=1;x++)for(int y=-1;y<=1;y++){s+=p.z-bias>texture(uShadow,p.xy+vec2(float(x),float(y))*t).r?0.:1.;}return mix(1.,.48+.52*s/9.,uShadows);}
 void main(){vec3 n=normalize(vN),c=vC;float kind=vM.y,rough=vM.x;
  if(kind>2.5&&kind<3.5){vec3 paper=mix(vec3(.925,.924,.892),vec3(.043,.074,.078),uNight);float d=rounded(vP.xz-vec2(3.5,4.0),vec2(48.,32.),8.);float ao=.20*exp(-max(d,0.)*max(d,0.)/24.);float s=shadow();c=paper*(1.-ao)*(1.-(1.-s)*.10);float lift=exp(-dot(vP.xz,vP.xz)/12000.);c+=vec3(.012,.014,.01)*lift*(1.-uNight);frag=vec4(c,1.);return;}
  float wet=0.;
- if(kind>.5&&kind<1.5){vec3 field=texture(uField,clamp((vP.xz+vec2(44.,28.))/vec2(88.,56.),0.,1.)).rgb;wet=field.r;c*=mix(1.,.77,wet);float stripe=step(.5,fract((vP.x+44.)/14.667));c*=.974+.026*stripe;float fine=sin(vP.x*40.0)*sin(vP.z*40.0)*.002*(1.-smoothstep(.1,.7,length(fwidth(vP.xz*40.))));c+=fine;float edge=rounded(vP.xz,vec2(44.,28.),7.8);c*=1.-.14*exp(-abs(edge)/1.5);c=mix(c,vec3(.53,.58,.32),field.g*.12+field.b*.18);rough=mix(.93,.32,wet);}
+ if(kind>.5&&kind<1.5){vec4 fieldTex=texture(uField,clamp((vP.xz+vec2(44.,28.))/vec2(88.,56.),0.,1.));vec3 field=fieldTex.rgb;float wear=fieldTex.a;wet=field.r;c*=mix(1.,.77,wet);float stripe=step(.5,fract((vP.x+44.)/14.667));c*=.974+.026*stripe;float fine=sin(vP.x*40.0)*sin(vP.z*40.0)*.002*(1.-smoothstep(.1,.7,length(fwidth(vP.xz*40.))));c+=fine;float edge=rounded(vP.xz,vec2(44.,28.),7.8);c*=1.-.14*exp(-abs(edge)/1.5);c=mix(c,vec3(.53,.58,.32),field.g*.12+field.b*.18);c=mix(c,vec3(.47,.44,.33),smoothstep(.08,.8,wear)*.62);c=mix(c,vec3(.25,.21,.16),smoothstep(.1,.7,wear)*smoothstep(.12,.55,wet)*.75);rough=mix(.93,.32,wet);}
  if(kind>3.5&&kind<4.5){vec3 p=normalize(vLocal);float d=-1.;float k=1.618033989;for(int a=-1;a<=1;a+=2)for(int b=-1;b<=1;b+=2){d=max(d,dot(p,normalize(vec3(0.,float(a),float(b)*k))));d=max(d,dot(p,normalize(vec3(float(a),float(b)*k,0.))));d=max(d,dot(p,normalize(vec3(float(b)*k,0.,float(a)))));}float panelMask=smoothstep(.928,.935,d);c=mix(vec3(.92,.934,.865),vec3(.115,.20,.18),panelMask);rough=.53;}
- vec3 sky=mix(vec3(.35,.365,.375),vec3(.19,.265,.32),uNight),key=mix(vec3(.82,.80,.77),vec3(.58,.67,.72),uNight);
+ vec3 sky=mix(vec3(.35,.365,.375),vec3(.19,.265,.32),uNight),key=mix(vec3(.82,.80,.77),vec3(.58,.67,.72),uNight);key=mix(key,vec3(.98,.74,.52),uWarm);sky=mix(sky,vec3(.40,.34,.35),uWarm*.5);
  float hemi=.65+.35*max(n.y,0.);float ndl=max(dot(n,uSun),0.),sh=shadow();vec3 lit=c*(sky*hemi+key*ndl*sh*(1.-uCloud*.14));
  vec3 view=normalize(uEye-vP),halfway=normalize(view+uSun);float spec=pow(max(dot(n,halfway),0.),mix(100.,9.,rough));float fres=pow(1.-max(dot(n,view),0.),4.);lit+=mix(vec3(.09),vec3(.18),wet)*spec*ndl*sh;lit+=c*fres*.07;
  if(kind>5.5&&kind<6.5){lit=mix(lit,vec3(.42,.61,.63),pow(1.-abs(dot(n,view)),3.)*.55);lit+=vec3(.24)*spec*sh;}
  if(kind>4.5&&kind<5.5)lit=mix(c*.93,c*1.22,uNight);
  if(kind<1.5&&vP.y<.18&&vP.y>-.1){for(int i=0;i<5;i++){vec4 b=uBodies[i];float radius=b.w*(1.+b.z*.035),dist=length(vP.xz-b.xy-vec2(.18,.10)*b.z)/radius;float ao=exp(-dist*dist*2.5)*.34*exp(-b.z*.05);lit*=1.-ao;}}
+ if(kind>.5&&kind<1.5&&uNight>.01){vec2 l0=vP.xz-vec2(-30.,-17.),l1=vP.xz-vec2(30.,-17.);float pool=exp(-dot(l0,l0)/420.)+exp(-dot(l1,l1)/420.);vec3 toLamp=normalize(vec3(sign(vP.x)*39.,9.4,-28.7)-vP);float glint=pow(max(dot(n,normalize(view+toLamp)),0.),mix(90.,12.,rough));lit+=c*vec3(1.,.96,.84)*pool*uNight*.32+vec3(.2,.2,.17)*glint*wet*uNight*(.25+pool);}
  lit=mix(lit,lit*vec3(.80,.91,1.02),uNight*.27);lit=clamp(lit,0.,1.);frag=vec4(lit,uOpacity);}`;
   const DVS = `#version 300 es
 precision highp float;layout(location=0)in vec3 aP;uniform mat4 uVP,uModel;void main(){gl_Position=uVP*uModel*vec4(aP,1.);}`;
@@ -436,6 +446,7 @@ precision highp float;void main(){}`;
         'Rain',
         'Opacity',
         'Shadows',
+        'Warm',
         'Shadow',
         'Field',
         'Bodies'
@@ -504,6 +515,25 @@ precision highp float;void main(){}`;
           [0, 0, 0]
         )
       );
+    }
+    // The key light follows the simulated clock: noon matches the original light, mornings and
+    // evenings swing it round and lower it, dusk warms it, and shadows fade out as the sun sets.
+    updateSun(w = {}, dt = 0) {
+      const sunHeight = w.sun ?? 1,
+        az = Math.atan2(-55, -45) + ((w.clock ?? 0.5) - 0.5) * 2.4,
+        el = lerp(0.32, 0.9, clamp(sunHeight / 0.9, 0, 1)),
+        target = [Math.cos(el) * Math.cos(az), Math.sin(el), Math.cos(el) * Math.sin(az)],
+        k = this.reduced || !this.frames ? 1 : 1 - Math.exp(-dt * 1.5);
+      this.sun = V.norm(this.sun.map((v, i) => lerp(v, target[i], k)));
+      this.lightVP = mul(
+        ortho(-70, 70, -65, 65, 1, 250),
+        look(
+          this.sun.map(v => v * 150),
+          [0, 0, 0]
+        )
+      );
+      this.daylight = clamp(sunHeight / 0.3, 0, 1) * (1 - (w.cloud || 0) * 0.35) * (1 - this.night);
+      this.warm = clamp((0.5 - sunHeight) / 0.4, 0, 1) * clamp(sunHeight / 0.08, 0, 1) * (1 - this.night) * 0.8;
     }
     setupField() {
       const gl = this.gl;
@@ -680,9 +710,8 @@ precision highp float;void main(){}`;
       lowBall.sphere(1.25, PA.edge, 0.5, 4, 8, 16);
       this.ballLow = this.mesh(lowBall);
       const lowWheel = new Geo();
-      lowWheel.tube([0, 0, -0.23], [0, 0, 0.23], 0.47, PA.rubber, 0.92, 0, 12);
-      for (const side of [-1, 1])
-        lowWheel.tube([0, 0, side * 0.235], [0, 0, side * 0.255], 0.255, PA.metal, 0.4, 0, 12);
+      lowWheel.tube([0, 0, -0.24], [0, 0, 0.24], WHEEL_RADIUS, PA.rubber, 0.92, 0, 12);
+      for (const side of [-1, 1]) lowWheel.tube([0, 0, side * 0.245], [0, 0, side * 0.26], 0.3, PA.metal, 0.4, 0, 12);
       this.wheelLow = this.mesh(lowWheel);
       const prop = new Geo();
       prop.sphere(1.4, rgb('#a89878'), 0.8);
@@ -737,123 +766,160 @@ precision highp float;void main(){}`;
           0.05
         );
     }
+    // Toy battle-car: chunky wheels, wedge nose, set-back bubble cabin, wheel-arch flares,
+    // rear wing and one central boost nozzle. +x is forward, y up; the physics hull is
+    // 3.32 x 0.90 x 1.88, so the bodywork stays within it apart from flares and the wing.
     makeCar(color) {
       const g = new Geo(),
-        profile = [
-          [-1.64, -0.78],
-          [-1.45, -0.95],
-          [1.21, -0.95],
-          [1.58, -0.72],
-          [1.73, -0.38],
-          [1.73, 0.38],
-          [1.58, 0.72],
-          [1.21, 0.95],
-          [-1.45, 0.95],
-          [-1.64, 0.78]
-        ];
-      const ring = (y, k = 1) => profile.map(([x, z]) => [x * k, y, z * k]);
-      const lo = ring(-0.25, 0.94),
-        hi = ring(0.28);
-      g.face(hi, color, 0.36, 0, [0, 1, 0]);
-      for (let i = 0; i < lo.length; i++) {
-        const j = (i + 1) % lo.length;
-        g.face([lo[j], lo[i], hi[i], hi[j]], color, 0.38);
-      }
-      g.box(0, -0.18, 0, 2.9, 0.23, 1.85, PA.ink);
-      g.face(
-        [
-          [0.65, 0.34, -0.79],
-          [1.36, 0.29, -0.78],
-          [1.7, 0.17, -0.38],
-          [1.7, 0.17, 0.38],
-          [1.36, 0.29, 0.78],
-          [0.65, 0.34, 0.79]
-        ],
-        color,
-        0.32
-      );
-      const a = [-0.96, 0.93, -0.63],
-        b = [-0.96, 0.93, 0.63],
-        c = [0.26, 1.0, 0.63],
-        d = [0.26, 1.0, -0.63];
-      g.face([a, b, c, d], color, 0.31, 0, [0, 1, 0]);
-      g.face([d, c, [0.86, 0.32, 0.81], [0.86, 0.32, -0.81]], PA.glass, 0.17, 6);
-      g.face([[-1.34, 0.3, -0.78], [-1.34, 0.3, 0.78], b, a], PA.glass, 0.22, 6);
-      for (const z of [-1, 1]) {
-        g.face(
+        shade = color.map(v => v * 0.72),
+        center = [0, 0.1, 0];
+      // Face with an outward normal, whatever the point order (the Canvas path culls by normal).
+      const shell = (pts, col, rough = 0.36, kind = 0, from = center) => {
+        const n = V.norm(V.cross(V.sub(pts[1], pts[0]), V.sub(pts[2], pts[0]))),
+          mid = pts.reduce((s, p) => V.add(s, p), [0, 0, 0]).map(v => v / pts.length);
+        g.face(V.dot(n, V.sub(mid, from)) < 0 ? pts.slice().reverse() : pts, col, rough, kind);
+      };
+      const prism = (profile, y0, y1, col, rough = 0.38) => {
+        const lo = profile.map(([x, z]) => [x, y0, z]),
+          hi = profile.map(([x, z]) => [x, y1, z]),
+          mid = [profile.reduce((s, p) => s + p[0], 0) / profile.length, (y0 + y1) / 2, 0];
+        g.face(hi, col, rough, 0, [0, 1, 0]);
+        for (let i = 0; i < lo.length; i++) {
+          const j = (i + 1) % lo.length;
+          shell([lo[j], lo[i], hi[i], hi[j]], col, rough, 0, mid);
+        }
+      };
+      const hull = [
+        [-1.62, -0.7],
+        [-1.5, -0.86],
+        [1.3, -0.86],
+        [1.64, -0.66],
+        [1.74, -0.4],
+        [1.74, 0.4],
+        [1.64, 0.66],
+        [1.3, 0.86],
+        [-1.5, 0.86],
+        [-1.62, 0.7]
+      ];
+      prism(
+        hull.map(([x, z]) => [x * 0.97, z * 0.97]),
+        -0.36,
+        -0.2,
+        PA.ink,
+        0.8
+      ); // dark tub
+      prism(hull, -0.2, 0.14, color); // lower shell
+      // wedge nose rising to the cabin
+      for (const z of [-1, 1])
+        shell(
           [
-            [-1.32, 0.28, z * 0.8],
-            [-0.96, 0.93, z * 0.63],
-            [0.26, 1.0, z * 0.63],
-            [0.86, 0.32, z * 0.81]
+            [0.3, 0.14, z * 0.8],
+            [1.72, 0.14, z * 0.6],
+            [1.72, 0.2, z * 0.56],
+            [0.3, 0.5, z * 0.7]
           ],
           color,
-          0.3
+          0.34,
+          0,
+          [1, 0.2, 0]
         );
-        g.face(
-          [
-            [-1.11, 0.4, z * 0.805],
-            [-0.88, 0.85, z * 0.651],
-            [0.16, 0.9, z * 0.654],
-            [0.63, 0.4, z * 0.813]
-          ],
-          PA.glass,
-          0.19,
-          6
-        );
-        g.tube([-0.4, 0.4, z * 0.82], [-0.4, 0.88, z * 0.657], 0.03, color, 0.4);
-        g.box(0.09, 0.18, z * 0.954, 0.2, 0.032, 0.022, PA.metal);
-        g.box(-0.18, -0.2, z * 0.99, 2.95, 0.12, 0.14, PA.dark);
-        g.box(-1.29, 0.56, z * 0.62, 0.1, 0.52, 0.11, PA.dark);
-      }
-      g.box(-1.38, 0.84, 0, 0.45, 0.115, 2.23, color, 0.36);
-      g.box(-1.43, 0.9, 0, 0.48, 0.018, 2.18, PA.dark);
-      g.box(1.67, -0.1, 0, 0.14, 0.23, 1.51, PA.dark);
-      g.box(-1.69, -0.09, 0, 0.13, 0.19, 1.5, PA.dark);
-      for (const z of [-0.58, 0.58]) {
-        g.box(1.736, 0.1, z, 0.035, 0.135, 0.38, rgb('#eee6be'), 0.3, 5);
-        g.box(-1.702, 0.17, z, 0.03, 0.09, 0.38, rgb('#da6555'), 0.3, 5);
-        g.tube([-1.75, -0.12, z], [-1.96, -0.12, z], 0.12, PA.metal, 0.32, 0, 12);
-        g.tube([-1.962, -0.12, z], [-1.98, -0.12, z], 0.075, PA.ink, 0.8, 0, 10);
-      }
-      // A single ivory racing inlay, not a busy decal sheet.
       g.face(
         [
-          [0.78, 0.335, -0.07],
-          [1.5, 0.244, -0.07],
-          [1.5, 0.244, 0.07],
-          [0.78, 0.335, 0.07]
+          [0.3, 0.5, -0.7],
+          [1.72, 0.2, -0.56],
+          [1.72, 0.2, 0.56],
+          [0.3, 0.5, 0.7]
         ],
-        PA.edge,
-        0.45
+        color,
+        0.3,
+        0,
+        V.norm([0.21, 1, 0])
       );
+      shell(
+        [
+          [1.72, 0.14, -0.6],
+          [1.72, 0.14, 0.6],
+          [1.72, 0.2, 0.56],
+          [1.72, 0.2, -0.56]
+        ],
+        color,
+        0.34,
+        0,
+        [0, 0.17, 0]
+      );
+      g.box(-0.66, 0.32, 0, 1.92, 0.36, 1.46, color, 0.36); // raised rear deck
+      // set-back bubble cabin
+      const b0 = [-0.98, 0.5, -0.66],
+        b1 = [0.34, 0.5, -0.7],
+        b2 = [0.34, 0.5, 0.7],
+        b3 = [-0.98, 0.5, 0.66],
+        t0 = [-0.76, 1.0, -0.5],
+        t1 = [0.02, 1.0, -0.52],
+        t2 = [0.02, 1.0, 0.52],
+        t3 = [-0.76, 1.0, 0.5],
+        cab = [-0.4, 0.75, 0];
+      g.face([t0, t3, t2, t1], color, 0.3, 0, [0, 1, 0]);
+      shell([b1, b2, t2, t1], PA.glass, 0.16, 6, cab);
+      shell([b3, b0, t0, t3], PA.glass, 0.2, 6, cab);
+      shell([b0, b1, t1, t0], PA.glass, 0.18, 6, cab);
+      shell([b2, b3, t3, t2], PA.glass, 0.18, 6, cab);
+      for (const z of [-1, 1]) g.tube([-0.36, 0.52, z * 0.68], [-0.36, 0.98, z * 0.51], 0.035, color, 0.4);
+      // roof roundel and one ivory inlay down the nose
+      const roundel = [];
+      for (let i = 0; i < 14; i++) {
+        const a = (-i * TAU) / 14;
+        roundel.push([-0.37 + Math.cos(a) * 0.19, 1.008, Math.sin(a) * 0.19]);
+      }
+      g.face(roundel, PA.edge, 0.45, 0, [0, 1, 0]);
       g.face(
         [
-          [-0.9, 0.936, -0.065],
-          [-0.9, 0.936, 0.065],
-          [0.23, 1.009, 0.065],
-          [0.23, 1.009, -0.065]
+          [0.36, 0.508, -0.07],
+          [1.7, 0.208, -0.07],
+          [1.7, 0.208, 0.07],
+          [0.36, 0.508, 0.07]
         ],
         PA.edge,
-        0.45
+        0.45,
+        0,
+        V.norm([0.21, 1, 0])
       );
+      for (const z of [-1, 1]) {
+        g.box(-0.08, 0.0, z * 0.868, 2.7, 0.05, 0.012, PA.edge, 0.45); // side pinstripe
+        for (const x of [-1.1, 1.12]) {
+          g.box(x, 0.2, z * 0.92, 1.06, 0.12, 0.2, shade, 0.4); // arch flare
+          g.box(x, 0.28, z * 0.9, 0.9, 0.05, 0.16, color, 0.36);
+        }
+        // rear wing: struts, blade and endplates
+        g.box(-1.38, 0.66, z * 0.42, 0.1, 0.34, 0.08, PA.dark);
+        g.box(-1.6, 0.66, z * 0.96, 0.46, 0.3, 0.05, PA.dark);
+      }
+      g.box(-1.54, 0.85, 0, 0.44, 0.08, 1.96, color, 0.32);
+      g.box(1.63, -0.3, 0, 0.32, 0.08, 1.46, PA.dark); // front splitter
+      g.box(-1.62, -0.22, 0, 0.12, 0.2, 1.3, PA.dark); // diffuser
+      for (const z of [-0.44, 0.44]) {
+        g.box(1.746, 0.02, z, 0.03, 0.1, 0.24, rgb('#eee6be'), 0.3, 5);
+        g.box(-1.636, 0.22, z, 0.03, 0.08, 0.36, rgb('#da6555'), 0.3, 5);
+      }
+      g.tube([-1.6, 0.04, 0], [-1.88, 0.04, 0], 0.2, PA.metal, 0.3, 0, 14); // boost nozzle
+      g.tube([-1.881, 0.04, 0], [-1.9, 0.04, 0], 0.13, PA.ink, 0.8, 0, 12);
       return this.mesh(g);
     }
     makeWheel() {
       const g = new Geo();
-      g.tube([0, 0, -0.23], [0, 0, 0.23], 0.47, PA.rubber, 0.92, 0, 24);
+      g.tube([0, 0, -0.2], [0, 0, 0.2], WHEEL_RADIUS, PA.rubber, 0.92, 0, 24);
       for (const s of [-1, 1]) {
-        g.tube([0, 0, s * 0.232], [0, 0, s * 0.251], 0.285, PA.metal, 0.35, 0, 20);
-        g.tube([0, 0, s * 0.252], [0, 0, s * 0.261], 0.215, PA.dark, 0.5, 0, 20);
+        g.tube([0, 0, s * 0.2], [0, 0, s * 0.24], WHEEL_RADIUS - 0.03, PA.rubber, 0.9, 0, 24); // rounded shoulder
+        g.tube([0, 0, s * 0.241], [0, 0, s * 0.256], 0.31, PA.metal, 0.35, 0, 20);
+        g.tube([0, 0, s * 0.257], [0, 0, s * 0.266], 0.23, PA.dark, 0.5, 0, 20);
         for (let i = 0; i < 5; i++) {
           const a = (i * TAU) / 5,
-            b = a + 0.11;
+            b = a + 0.14;
           g.face(
             [
-              [0.065 * Math.cos(a), 0.065 * Math.sin(a), s * 0.27],
-              [0.25 * Math.cos(a - 0.09), 0.25 * Math.sin(a - 0.09), s * 0.27],
-              [0.25 * Math.cos(b + 0.09), 0.25 * Math.sin(b + 0.09), s * 0.27],
-              [0.065 * Math.cos(b), 0.065 * Math.sin(b), s * 0.27]
+              [0.07 * Math.cos(a), 0.07 * Math.sin(a), s * 0.275],
+              [0.27 * Math.cos(a - 0.1), 0.27 * Math.sin(a - 0.1), s * 0.275],
+              [0.27 * Math.cos(b + 0.1), 0.27 * Math.sin(b + 0.1), s * 0.275],
+              [0.07 * Math.cos(b), 0.07 * Math.sin(b), s * 0.275]
             ],
             PA.metal,
             0.32,
@@ -861,7 +927,7 @@ precision highp float;void main(){}`;
             [0, 0, s]
           );
         }
-        g.tube([0, 0, s * 0.27], [0, 0, s * 0.276], 0.07, PA.metal, 0.3, 0, 10);
+        g.tube([0, 0, s * 0.275], [0, 0, s * 0.282], 0.08, PA.gold, 0.3, 0, 10);
       }
       return this.mesh(g);
     }
@@ -955,7 +1021,7 @@ precision highp float;void main(){}`;
         data[i * 4] = clamp(((f.wet[i] || 0) / q) * 255, 0, 255);
         data[i * 4 + 1] = clamp(((f.heat[i] || 0) / q) * 255, 0, 255);
         data[i * 4 + 2] = clamp(((f.life?.[i] || 0) / q) * 255, 0, 255);
-        data[i * 4 + 3] = 255;
+        data[i * 4 + 3] = clamp(((f.wear?.[i] || 0) / q) * 255, 0, 255);
       }
       const gl = this.gl;
       gl.activeTexture(gl.TEXTURE1);
@@ -1079,22 +1145,19 @@ precision highp float;void main(){}`;
       for (const c of s.cars) {
         const m = model(c.q, [c.x, c.y, c.z]);
         this.draw(this.carBodies[c.id], m, depth);
-        for (const x of [-1.08, 1.1])
-          for (const z of [-0.99, 0.99]) {
-            const steer = x > 0 ? (c.steer || 0) * 0.43 : 0,
-              local = mul(
-                model([0, Math.sin(steer / 2), 0, Math.cos(steer / 2)], [x, -0.1, z]),
-                model([0, 0, Math.sin((c.wheelSpin || 0) / 2), Math.cos((c.wheelSpin || 0) / 2)])
-              );
-            this.draw(this.wheelMesh, mul(m, local), depth);
-          }
-        if (c.boosting && !depth && this.fx) {
-          for (const z of [-0.58, 0.58])
-            this.draw(
-              this.flameMesh,
-              mul(m, model([0, 0, 0, 1], [-2.66, -0.1, z], [0.95 + 0.1 * Math.sin(s.time * 51), 0.13, 0.13]))
+        for (const [x, y, z] of WHEEL_MOUNTS) {
+          const steer = x > 0 ? (c.steer || 0) * 0.43 : 0,
+            local = mul(
+              model([0, Math.sin(steer / 2), 0, Math.cos(steer / 2)], [x, y, z]),
+              model([0, 0, Math.sin((c.wheelSpin || 0) / 2), Math.cos((c.wheelSpin || 0) / 2)])
             );
+          this.draw(this.wheelMesh, mul(m, local), depth);
         }
+        if (c.boosting && !depth && this.fx)
+          this.draw(
+            this.flameMesh,
+            mul(m, model([0, 0, 0, 1], [-2.75, 0.04, 0], [0.9 + 0.1 * Math.sin(s.time * 51), 0.19, 0.19]))
+          );
       }
       this.draw(this.ballMesh, model(s.ball.q, [s.ball.x, s.ball.y, s.ball.z]), depth);
       for (const p of s.props) this.draw(this.propMesh, model(p.q, [p.x, p.y, p.z]), depth);
@@ -1114,7 +1177,8 @@ precision highp float;void main(){}`;
       dt = clamp(dt, 0, 0.1);
       this.prepareCamera(s, dt);
       this.night = lerp(this.night, this.theme === 'night' ? 1 : 0, this.reduced ? 1 : 1 - Math.exp(-dt * 2.5));
-      const shadows = this.hasShadow && this.quality !== 'coarse';
+      this.updateSun(s.weather, dt);
+      const shadows = this.hasShadow && this.quality !== 'coarse' && this.daylight > 0.01;
       gl.enable(gl.DEPTH_TEST);
       gl.disable(gl.CULL_FACE);
       gl.disable(gl.BLEND);
@@ -1141,7 +1205,8 @@ precision highp float;void main(){}`;
       gl.uniform1f(u.Night, this.night);
       gl.uniform1f(u.Cloud, s.weather?.cloud || 0);
       gl.uniform1f(u.Rain, s.weather?.rain || 0);
-      gl.uniform1f(u.Shadows, shadows ? 1 : 0);
+      gl.uniform1f(u.Shadows, shadows ? this.daylight : 0);
+      gl.uniform1f(u.Warm, this.warm);
       gl.activeTexture(gl.TEXTURE0);
       gl.bindTexture(gl.TEXTURE_2D, this.shadowTex);
       gl.uniform1i(u.Shadow, 0);
@@ -1194,6 +1259,7 @@ precision highp float;void main(){}`;
           line([car.x, 0.07, car.z], [car.target.x, 0.07, car.target.z], car.id % 2 ? '#ce855f' : '#69a5be', 1);
         c.setLineDash([]);
       }
+      if (this.fx && !this.reduced) this.drawWeather(s, point, line);
       if (this.fx && !this.reduced) {
         const rain = s.weather?.rain || 0,
           count = Math.floor(rain * (this.quality === 'coarse' ? 24 : 64));
@@ -1204,7 +1270,7 @@ precision highp float;void main(){}`;
             y = 17 - ((s.time * 18 + i * 5.71) % 18);
           line(
             [x, y, z],
-            [x + 0.06 * (s.weather.windX || 0), y - 1.3, z + 0.06 * (s.weather.windZ || 0)],
+            [x + 0.16 * (s.weather.windX || 0), y - 1.3, z + 0.16 * (s.weather.windZ || 0)],
             this.night > 0.5 ? 'rgba(190,211,212,.28)' : 'rgba(127,157,150,.25)',
             0.65
           );
@@ -1300,6 +1366,125 @@ precision highp float;void main(){}`;
         }
       }
     }
+    // Visible weather, drawn on the shared overlay so both renderers show it. Everything here is
+    // presentation derived from the snapshot: it never feeds back into the simulation.
+    drawWeather(s, point, line) {
+      const c = this.ctx,
+        d = this.density,
+        w = s.weather || {},
+        t = s.time || 0,
+        night = this.night > 0.5,
+        windX = w.windX || 0,
+        windZ = w.windZ || 0,
+        wind = Math.hypot(windX, windZ),
+        daylight = clamp((w.sun ?? 1) / 0.3, 0, 1),
+        hash = n => {
+          const x = Math.sin(n * 127.1) * 43758.5453;
+          return x - Math.floor(x);
+        },
+        squash = Math.max(0.2, Math.sin(this.camPitch || 0.6)),
+        blob = (x, z, radius, color, alpha) => {
+          const p = point([x, 0.05, z]),
+            r = radius * this.scale;
+          if (r < 1 || alpha <= 0.002) return;
+          c.save();
+          c.translate(p[0], p[1]);
+          c.scale(1, squash);
+          const g = c.createRadialGradient(0, 0, 0, 0, 0, r);
+          g.addColorStop(0, `rgba(${color},${alpha})`);
+          g.addColorStop(1, `rgba(${color},0)`);
+          c.fillStyle = g;
+          c.beginPath();
+          c.arc(0, 0, r, 0, TAU);
+          c.fill();
+          c.restore();
+        };
+      // Cloud shadows drift with the wind across the whole arena.
+      const cloud = clamp(((w.cloud || 0) - 0.3) / 0.6, 0, 1) * daylight;
+      if (cloud > 0.02)
+        for (let i = 0; i < 3; i++) {
+          const x = ((((hash(i + 1) * 180 + t * windX * 0.35) % 180) + 180) % 180) - 90,
+            z = ((((hash(i + 7) * 120 + t * windZ * 0.35) % 120) + 120) % 120) - 60;
+          blob(x, z, 22 + hash(i + 3) * 14, '28,45,38', 0.13 * cloud);
+        }
+      // Splash rings where drops land on the turf.
+      const rain = w.rain || 0;
+      if (rain > 0.12) {
+        const rings = Math.floor(rain * (this.quality === 'coarse' ? 10 : 26));
+        c.lineWidth = 0.7 * d;
+        for (let i = 0; i < rings; i++) {
+          const cycle = t * 1.7 + hash(i + 11),
+            phase = cycle - Math.floor(cycle),
+            seed = i * 31 + Math.floor(cycle) * 7,
+            x = -40 + hash(seed) * 80,
+            z = -24 + hash(seed + 5) * 48,
+            p = point([x, 0.04, z]),
+            r = (0.15 + phase * 0.7) * this.scale;
+          c.strokeStyle = night ? `rgba(200,220,214,${0.35 * (1 - phase)})` : `rgba(226,236,228,${0.5 * (1 - phase)})`;
+          c.beginPath();
+          c.ellipse(p[0], p[1], r, r * squash, 0, 0, TAU);
+          c.stroke();
+        }
+      }
+      // Flags on the floodlight masts stream downwind; they droop in still air.
+      const flow = clamp(wind / 6, 0, 1),
+        dirX = wind > 0.05 ? windX / wind : 1,
+        dirZ = wind > 0.05 ? windZ / wind : 0;
+      for (const [mx, color] of [
+        [-39, '82,154,190'],
+        [39, '222,137,94']
+      ]) {
+        const top = [mx, 12.2, -28.8];
+        line([mx, 9.9, -28.8], top, night ? 'rgba(200,215,206,.55)' : 'rgba(39,59,54,.55)', 1);
+        const length = 2.4,
+          pts = [];
+        for (let k = 0; k <= 4; k++) {
+          const u = k / 4,
+            wave = Math.sin(t * (3 + flow * 6) - u * 5) * 0.25 * u * (0.3 + flow);
+          pts.push([
+            top[0] + dirX * length * u * (0.25 + flow * 0.75) - dirZ * wave,
+            top[1] - 0.35 - (1 - flow) * u * 1.6,
+            top[2] + dirZ * length * u * (0.25 + flow * 0.75) + dirX * wave
+          ]);
+        }
+        c.fillStyle = `rgba(${color},${night ? 0.75 : 0.85})`;
+        c.beginPath();
+        pts.forEach((q, k) => {
+          const a = point(q);
+          k ? c.lineTo(...a) : c.moveTo(...a);
+        });
+        for (let k = pts.length - 1; k >= 0; k--)
+          c.lineTo(...point([pts[k][0], pts[k][1] - 0.7 * (1 - k / 5), pts[k][2]]));
+        c.closePath();
+        c.fill();
+      }
+      // Leaves and debris skate across the pitch in a strong wind.
+      if (wind > 3.5) {
+        const leaves = Math.floor(clamp((wind - 3.5) / 4, 0, 1) * 18);
+        for (let i = 0; i < leaves; i++) {
+          const speed = 0.6 + hash(i + 40),
+            x = ((((hash(i + 20) * 100 + t * windX * speed) % 100) + 100) % 100) - 50,
+            z = ((((hash(i + 60) * 64 + t * windZ * speed) % 64) + 64) % 64) - 32,
+            y = 0.2 + Math.abs(Math.sin(t * 3 + i)) * 0.8,
+            q = point([x, y, z]);
+          c.fillStyle = hash(i + 80) > 0.5 ? 'rgba(166,138,82,.7)' : 'rgba(120,138,92,.65)';
+          c.beginPath();
+          c.ellipse(q[0], q[1], 1.8 * d, 0.9 * d, t * 4 + i, 0, TAU);
+          c.fill();
+        }
+      }
+      // Morning mist: low sun, still air, early in the day.
+      const clock = w.clock ?? 0.5,
+        morning = clamp(1 - Math.abs(clock - 0.28) / 0.07, 0, 1),
+        mist = morning * clamp(1 - wind / 5, 0, 1) * clamp(1 - (w.sun ?? 1) * 1.6, 0, 1);
+      if (mist > 0.02) {
+        const g = c.createLinearGradient(0, 0, 0, this.h);
+        g.addColorStop(0, `rgba(237,237,229,${0.05 * mist})`);
+        g.addColorStop(1, `rgba(237,237,229,${0.38 * mist})`);
+        c.fillStyle = g;
+        c.fillRect(0, 0, this.w, this.h);
+      }
+    }
     drawPortrait(canvas, id) {
       if (this.fallback) {
         this.fallback.drawPortrait(canvas, id);
@@ -1328,8 +1513,7 @@ precision highp float;void main(){}`;
         }
       };
       gather(this.carBodies[id]);
-      for (const x of [-1.08, 1.1])
-        for (const z of [-0.99, 0.99]) gather(this.wheelMesh, model(undefined, [x, -0.1, z]));
+      for (const mount of WHEEL_MOUNTS) gather(this.wheelMesh, model(undefined, mount));
       ctx.save();
       ctx.translate(w * 0.52, h * 0.57);
       ctx.fillStyle = this.theme === 'night' ? 'rgba(0,0,0,.18)' : 'rgba(45,65,55,.09)';
@@ -1526,8 +1710,17 @@ precision highp float;void main(){}`;
         const wet = (f.wet[i] || 0) / q,
           heat = (f.heat[i] || 0) / q,
           life = (f.life?.[i] || 0) / q,
+          wear = (f.wear?.[i] || 0) / q,
           k = i * 4;
-        if (wet > 0.01 || heat > 0.04 || life) visible = true;
+        if (wet > 0.01 || heat > 0.04 || life || wear > 0.06) visible = true;
+        if (wear > 0.06 && wear * 1.4 > wet + heat) {
+          const mud = Math.min(1, wet * 1.8);
+          im.data[k] = 150 - mud * 80;
+          im.data[k + 1] = 138 - mud * 80;
+          im.data[k + 2] = 98 - mud * 60;
+          im.data[k + 3] = Math.min(120, wear * 130);
+          continue;
+        }
         im.data[k] = life ? 156 : wet > heat ? 86 : 201;
         im.data[k + 1] = life ? 170 : wet > heat ? 145 : 161;
         im.data[k + 2] = life ? 104 : wet > heat ? 153 : 109;
@@ -1780,18 +1973,17 @@ precision highp float;void main(){}`;
       for (const car of s.cars) {
         const m = model(car.q, [car.x, car.y, car.z]);
         this.collect(this.carBodies[car.id], m, this.vp, eye, faces, this.night);
-        for (const x of [-1.08, 1.1])
-          for (const z of [-0.99, 0.99]) {
-            const a = x > 0 ? (car.steer || 0) * 0.43 : 0,
-              wm = mul(
-                m,
-                mul(
-                  model([0, Math.sin(a / 2), 0, Math.cos(a / 2)], [x, -0.1, z]),
-                  model([0, 0, Math.sin((car.wheelSpin || 0) / 2), Math.cos((car.wheelSpin || 0) / 2)])
-                )
-              );
-            this.collect(this.scale < 12 ? this.wheelLow : this.wheelMesh, wm, this.vp, eye, faces, this.night);
-          }
+        for (const [x, y, z] of WHEEL_MOUNTS) {
+          const a = x > 0 ? (car.steer || 0) * 0.43 : 0,
+            wm = mul(
+              m,
+              mul(
+                model([0, Math.sin(a / 2), 0, Math.cos(a / 2)], [x, y, z]),
+                model([0, 0, Math.sin((car.wheelSpin || 0) / 2), Math.cos((car.wheelSpin || 0) / 2)])
+              )
+            );
+          this.collect(this.scale < 12 ? this.wheelLow : this.wheelMesh, wm, this.vp, eye, faces, this.night);
+        }
       }
       this.collect(
         this.scale < 12 ? this.ballLow : this.ballMesh,
@@ -1859,7 +2051,7 @@ precision highp float;void main(){}`;
       return renderer;
     } catch (e) {
       base?.remove();
-      console.warn('Bot-ket League: using the lightweight scene.', e.message);
+      console.warn('Bo-ket League: using the lightweight scene.', e.message);
       try {
         return new CanvasAtelier(canvas);
       } catch (error) {
