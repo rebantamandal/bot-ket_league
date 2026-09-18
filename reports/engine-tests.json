@@ -1,5 +1,5 @@
 {
-  "date": "2026-09-18T06:07:51.462Z",
+  "date": "2026-09-18T07:07:33.673Z",
   "results": [
     {
       "name": "Quaternion basis preserves the intended forward axis",
@@ -145,66 +145,66 @@
       "seed": 82,
       "simulatedSeconds": 239.99999999994606,
       "score": [
-        3,
-        6
+        1,
+        4
       ],
       "stats": {
-        "touches": 158,
-        "goals": 9,
-        "air": 34,
-        "saves": 0,
+        "touches": 128,
+        "goals": 5,
+        "air": 24,
+        "saves": 1,
         "passes": 0,
-        "bumps": 39,
-        "dodges": 2,
-        "wallTouches": 6,
+        "bumps": 17,
+        "dodges": 5,
+        "wallTouches": 14,
         "safetyResets": 0,
         "assists": 0,
         "teamBumps": 0
       },
       "updates": [
-        616,
-        617
+        590,
+        599
       ],
       "learnedL2": [
-        0.24064604674242038,
-        0.2126212601483189
+        0.2155212295381612,
+        0.20642152850370502
       ],
       "patterns": 40,
       "stages": [
-        36,
-        4,
+        40,
+        0,
         0
       ],
       "maxCarSpeed": 46,
-      "maxSecondsWithoutTouch": 11.791666666655942
+      "maxSecondsWithoutTouch": 10.541666666657079
     },
     {
       "seed": 171,
       "simulatedSeconds": 239.99999999994606,
       "score": [
-        3,
-        4
+        4,
+        5
       ],
       "stats": {
-        "touches": 130,
-        "goals": 7,
+        "touches": 120,
+        "goals": 9,
         "air": 17,
-        "saves": 2,
+        "saves": 1,
         "passes": 0,
-        "bumps": 34,
-        "dodges": 5,
-        "wallTouches": 9,
+        "bumps": 39,
+        "dodges": 3,
+        "wallTouches": 2,
         "safetyResets": 0,
         "assists": 0,
         "teamBumps": 0
       },
       "updates": [
-        623,
-        635
+        562,
+        589
       ],
       "learnedL2": [
-        0.1591336873724448,
-        0.18799571172596038
+        0.22927298518582795,
+        0.19524378178353846
       ],
       "patterns": 40,
       "stages": [
@@ -212,45 +212,45 @@
         2,
         0
       ],
-      "maxCarSpeed": 43.19458288021506,
-      "maxSecondsWithoutTouch": 13.066666666666439
+      "maxCarSpeed": 41.692007148537016,
+      "maxSecondsWithoutTouch": 10.733333333341875
     },
     {
       "seed": 234,
       "simulatedSeconds": 239.99999999994606,
       "score": [
-        7,
-        4
+        3,
+        3
       ],
       "stats": {
-        "touches": 90,
-        "goals": 11,
-        "air": 11,
-        "saves": 1,
+        "touches": 83,
+        "goals": 6,
+        "air": 19,
+        "saves": 3,
         "passes": 0,
-        "bumps": 44,
-        "dodges": 2,
-        "wallTouches": 5,
+        "bumps": 20,
+        "dodges": 4,
+        "wallTouches": 11,
         "safetyResets": 0,
         "assists": 0,
         "teamBumps": 0
       },
       "updates": [
-        567,
-        581
+        577,
+        583
       ],
       "learnedL2": [
-        0.20837341643710328,
-        0.16996442204073928
+        0.1771477558640986,
+        0.15139027794097992
       ],
       "patterns": 40,
       "stages": [
-        36,
-        4,
+        38,
+        2,
         0
       ],
-      "maxCarSpeed": 41.147409837940465,
-      "maxSecondsWithoutTouch": 11.558333333322821
+      "maxCarSpeed": 41.16022879017965,
+      "maxSecondsWithoutTouch": 9.34166666665817
     }
   ]
 }

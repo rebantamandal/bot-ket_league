@@ -148,7 +148,7 @@ test('A selected forecast remains the driving target, not raw ball chasing', () 
   assert(c.plan.ball && Number.isFinite(c.target.z));
   assert(Math.abs(c.target.z - q.ball.z) > 1);
 });
-test('A sudden ball-velocity change causes early replanning', () => {
+test('A sudden ball-velocity change causes replanning, after a human reaction delay', () => {
   const q = W(),
     b = q.brains[0],
     c = q.cars[0];
@@ -156,8 +156,17 @@ test('A sudden ball-velocity change causes early replanning', () => {
   c.planAge = 0.11;
   q.ball.vz += 20;
   const before = b.planCount;
+  // The car sees the deflection but does not act on the same frame it happens.
   b.step(q, c, TP.DT);
+  assert.equal(b.planCount, before);
+  // It does act once its reaction time has passed, which is under a quarter of a second.
+  let frames = 1;
+  while (b.planCount === before && frames < 40) {
+    b.step(q, c, TP.DT);
+    frames++;
+  }
   assert.equal(b.planCount, before + 1);
+  assert(frames * TP.DT < 0.25, 'reaction took ' + (frames * TP.DT).toFixed(3) + ' s');
 });
 test('Blocked-motion recovery applies controls without teleporting', () => {
   const q = W(),

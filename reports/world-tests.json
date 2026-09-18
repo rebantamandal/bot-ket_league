@@ -1,5 +1,5 @@
 {
-  "date": "2026-09-18T06:07:57.897Z",
+  "date": "2026-09-18T07:07:40.035Z",
   "passed": 47,
   "failed": 0,
   "results": [
@@ -193,10 +193,10 @@
     }
   ],
   "measurements": {
-    "saveBytes": 1231724,
+    "saveBytes": 1333635,
     "identicalPolicyEvaluation": {
       "kind": "paired-evaluation",
-      "date": "2026-09-18T06:07:57.053Z",
+      "date": "2026-09-18T07:07:39.576Z",
       "archiveId": 1,
       "secondsPerGame": 12,
       "gameCount": 16,
@@ -234,16 +234,16 @@
           "side": 0,
           "seed": 771,
           "baseline": {
-            "scoreFor": 0,
+            "scoreFor": 1,
             "scoreAgainst": 0,
             "touches": 3,
-            "forwardImpulse": 0.8019072847979009
+            "forwardImpulse": 1.9739007195373912
           },
           "current": {
-            "scoreFor": 0,
+            "scoreFor": 1,
             "scoreAgainst": 0,
             "touches": 3,
-            "forwardImpulse": 0.8019072847979009
+            "forwardImpulse": 1.9739007195373912
           },
           "delta": 0
         },
@@ -254,15 +254,15 @@
           "seed": 774,
           "baseline": {
             "scoreFor": 0,
-            "scoreAgainst": 0,
-            "touches": 1,
-            "forwardImpulse": 1
+            "scoreAgainst": 1,
+            "touches": 2,
+            "forwardImpulse": 1.8812038168291751
           },
           "current": {
             "scoreFor": 0,
-            "scoreAgainst": 0,
-            "touches": 1,
-            "forwardImpulse": 1
+            "scoreAgainst": 1,
+            "touches": 2,
+            "forwardImpulse": 1.8812038168291751
           },
           "delta": 0
         },
@@ -273,15 +273,15 @@
           "seed": 818,
           "baseline": {
             "scoreFor": 0,
-            "scoreAgainst": 1,
-            "touches": 3,
-            "forwardImpulse": 2.095059759565594
+            "scoreAgainst": 0,
+            "touches": 1,
+            "forwardImpulse": 0.25920735455392147
           },
           "current": {
             "scoreFor": 0,
-            "scoreAgainst": 1,
-            "touches": 3,
-            "forwardImpulse": 2.095059759565594
+            "scoreAgainst": 0,
+            "touches": 1,
+            "forwardImpulse": 0.25920735455392147
           },
           "delta": 0
         },
@@ -294,6 +294,44 @@
             "scoreFor": 0,
             "scoreAgainst": 0,
             "touches": 1,
+            "forwardImpulse": 0.3641332409383167
+          },
+          "current": {
+            "scoreFor": 0,
+            "scoreAgainst": 0,
+            "touches": 1,
+            "forwardImpulse": 0.3641332409383167
+          },
+          "delta": 0
+        },
+        {
+          "agent": 1,
+          "condition": "dry",
+          "side": 0,
+          "seed": 784,
+          "baseline": {
+            "scoreFor": 0,
+            "scoreAgainst": 1,
+            "touches": 2,
+            "forwardImpulse": 1.9312867502713194
+          },
+          "current": {
+            "scoreFor": 0,
+            "scoreAgainst": 1,
+            "touches": 2,
+            "forwardImpulse": 1.9312867502713194
+          },
+          "delta": 0
+        },
+        {
+          "agent": 1,
+          "condition": "dry",
+          "side": 1,
+          "seed": 787,
+          "baseline": {
+            "scoreFor": 0,
+            "scoreAgainst": 0,
+            "touches": 1,
             "forwardImpulse": 1
           },
           "current": {
@@ -306,58 +344,20 @@
         },
         {
           "agent": 1,
-          "condition": "dry",
-          "side": 0,
-          "seed": 784,
-          "baseline": {
-            "scoreFor": 0,
-            "scoreAgainst": 0,
-            "touches": 2,
-            "forwardImpulse": 1.6783247244281876
-          },
-          "current": {
-            "scoreFor": 0,
-            "scoreAgainst": 0,
-            "touches": 2,
-            "forwardImpulse": 1.6783247244281876
-          },
-          "delta": 0
-        },
-        {
-          "agent": 1,
-          "condition": "dry",
-          "side": 1,
-          "seed": 787,
-          "baseline": {
-            "scoreFor": 1,
-            "scoreAgainst": 0,
-            "touches": 3,
-            "forwardImpulse": 2.676341459096135
-          },
-          "current": {
-            "scoreFor": 1,
-            "scoreAgainst": 0,
-            "touches": 3,
-            "forwardImpulse": 2.676341459096135
-          },
-          "delta": 0
-        },
-        {
-          "agent": 1,
           "condition": "wet",
           "side": 0,
           "seed": 831,
           "baseline": {
             "scoreFor": 0,
             "scoreAgainst": 0,
-            "touches": 2,
-            "forwardImpulse": 0.979708869731628
+            "touches": 0,
+            "forwardImpulse": 0
           },
           "current": {
             "scoreFor": 0,
             "scoreAgainst": 0,
-            "touches": 2,
-            "forwardImpulse": 0.979708869731628
+            "touches": 0,
+            "forwardImpulse": 0
           },
           "delta": 0
         },
@@ -369,14 +369,14 @@
           "baseline": {
             "scoreFor": 0,
             "scoreAgainst": 0,
-            "touches": 3,
-            "forwardImpulse": 1.7579777199902218
+            "touches": 2,
+            "forwardImpulse": 0.5249680084997421
           },
           "current": {
             "scoreFor": 0,
             "scoreAgainst": 0,
-            "touches": 3,
-            "forwardImpulse": 1.7579777199902218
+            "touches": 2,
+            "forwardImpulse": 0.5249680084997421
           },
           "delta": 0
         }
@@ -389,28 +389,28 @@
         {
           "variant": "recorded",
           "score": [
-            2,
-            2
+            4,
+            0
           ],
           "touches": [
-            3,
-            2
+            6,
+            1
           ],
           "quality": [
-            1.1154957216584545,
-            0.15797637218760843
+            -0.19918905717166036,
+            0.2263720578245995
           ],
           "stats": {
             "assists": 0,
             "teamBumps": 0,
-            "touches": 45,
+            "touches": 27,
             "goals": 4,
-            "air": 1,
+            "air": 4,
             "saves": 0,
             "passes": 0,
-            "bumps": 15,
+            "bumps": 9,
             "dodges": 1,
-            "wallTouches": 5,
+            "wallTouches": 2,
             "safetyResets": 0
           },
           "seconds": 18,
@@ -439,28 +439,28 @@
         {
           "variant": "wet",
           "score": [
-            3,
-            2
-          ],
-          "touches": [
-            12,
+            4,
             1
           ],
+          "touches": [
+            4,
+            4
+          ],
           "quality": [
-            0.7590543293175102,
-            0.3305412996756863
+            0.45408160342365056,
+            1.5088889957589076
           ],
           "stats": {
             "assists": 0,
             "teamBumps": 0,
-            "touches": 53,
+            "touches": 28,
             "goals": 5,
-            "air": 1,
+            "air": 4,
             "saves": 0,
             "passes": 0,
-            "bumps": 15,
+            "bumps": 5,
             "dodges": 1,
-            "wallTouches": 4,
+            "wallTouches": 2,
             "safetyResets": 0
           },
           "seconds": 18,
@@ -482,8 +482,8 @@
             "windScale": 1
           },
           "scoreDelta": [
-            1,
-            0
+            0,
+            1
           ]
         }
       ]

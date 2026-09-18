@@ -215,7 +215,7 @@
     "evaluation": {
       "kind": "paired-evaluation",
       "mode": "doubles",
-      "date": "2026-09-18T06:08:03.880Z",
+      "date": "2026-09-18T07:07:46.176Z",
       "archiveId": 1,
       "secondsPerGame": 3,
       "gameCount": 16,
@@ -294,13 +294,13 @@
             "scoreFor": 0,
             "scoreAgainst": 0,
             "touches": 1,
-            "forwardImpulse": 1
+            "forwardImpulse": 0.727787945497347
           },
           "current": {
             "scoreFor": 0,
             "scoreAgainst": 0,
             "touches": 1,
-            "forwardImpulse": 1
+            "forwardImpulse": 0.727787945497347
           },
           "delta": 0
         },
@@ -313,13 +313,13 @@
             "scoreFor": 0,
             "scoreAgainst": 0,
             "touches": 1,
-            "forwardImpulse": 1
+            "forwardImpulse": 0.3117408972404167
           },
           "current": {
             "scoreFor": 0,
             "scoreAgainst": 0,
             "touches": 1,
-            "forwardImpulse": 1
+            "forwardImpulse": 0.3117408972404167
           },
           "delta": 0
         },
@@ -370,13 +370,13 @@
             "scoreFor": 0,
             "scoreAgainst": 0,
             "touches": 1,
-            "forwardImpulse": 1
+            "forwardImpulse": 0.38522239904479
           },
           "current": {
             "scoreFor": 0,
             "scoreAgainst": 0,
             "touches": 1,
-            "forwardImpulse": 1
+            "forwardImpulse": 0.38522239904479
           },
           "delta": 0
         },
@@ -389,13 +389,13 @@
             "scoreFor": 0,
             "scoreAgainst": 0,
             "touches": 1,
-            "forwardImpulse": 1
+            "forwardImpulse": 0.1516001859791749
           },
           "current": {
             "scoreFor": 0,
             "scoreAgainst": 0,
             "touches": 1,
-            "forwardImpulse": 1
+            "forwardImpulse": 0.1516001859791749
           },
           "delta": 0
         }

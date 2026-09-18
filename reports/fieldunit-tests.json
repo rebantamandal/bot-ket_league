@@ -1,8 +1,8 @@
 {
-  "date": "2026-09-18T06:07:59.403Z",
+  "date": "2026-09-18T07:07:41.475Z",
   "passed": 36,
   "failed": 0,
-  "sourceSha256": "201af4814ae9b94842e4a4f5f9670d8a9e4f0ae8566e95cd96ed2db579f3b772",
+  "sourceSha256": "303e5e91775520d7f45cea407de9d1d38885e7db093b532977296c3af0a82524",
   "results": [
     {
       "name": "11 controller extends the existing schema with twelve team features",
@@ -53,7 +53,7 @@
       "pass": true
     },
     {
-      "name": "A sudden ball-velocity change causes early replanning",
+      "name": "A sudden ball-velocity change causes replanning, after a human reaction delay",
       "pass": true
     },
     {
